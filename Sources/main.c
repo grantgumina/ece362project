@@ -24,6 +24,7 @@ int h = 10;
 int w = 10;
 int board[30][30];
 int tempBoard[30][30];
+int tickCounter = 0;
 
 /***********************************************************************
 Initializations
@@ -39,16 +40,7 @@ void  initializations(void) {
 
   // Disable watchdog timer (COPCTL register)
   COPCTL = 0x40;    //COP off - RTI and COP stopped in BDM-mode
-  
-  
-  
-  /*; Initialize TIM Ch 7 (TC7) for periodic interrupts every 10.0 ms
-  ;    Enable timer subsystem                        
-  ;    Set channel 7 for output compare
-  ;    Set appropriate pre-scale factor and enable counter reset after OC7
-  ;    Set up channel 7 to generate 10 ms interrupt rate
-  ;    Initially disable TIM Ch 7 interrupts                                                                 
-  */                                                                 
+                    
   //;  < add TIM initialization code here >
   TSCR1 = 0x80; //enable TC7
   TSCR2 = 0x0c; //set TIM prescale factor to 16 and enable counter reset after OC7
@@ -57,9 +49,6 @@ void  initializations(void) {
   TIE = 0x80;  //enable TIM TC7 interrupt
   TC7 = 15000;  //set up TIM TC7 to generate 0.1 ms interrupt rate
   
-    
-  
-
   // Initialize asynchronous serial port (SCI) for 9600 baud, no interrupts
   SCIBDH =  0x00; //set baud rate to 9600
   SCIBDL =  0x9C; //24,000,000 / 16 / 156 = 9600 (approx)  
@@ -83,10 +72,6 @@ void  initializations(void) {
   //  Add RTI/interrupt initializations here
 
   // build the game board
-  
-
-  
-
 }
 	 		  
 void evolve() {
@@ -120,24 +105,30 @@ void evolve() {
     }
   }
 }
+
+void game() {
+  int x;
+  for (x = 0; x < w; x++) {
+    int y;
+    for (y = 0; y < h; y++) {
+      //board[y][x] = rand() < RAND_MAX / 10 ? 1 : 0;
+    }
+  }
+}
 	 		  			 		  		
 void main(void) {
 	initializations(); 		  			 		  		
 	EnableInterrupts;
 
   for(;;) {
-  
-    if(interuptFlag){
-      interuptFlag = 0;
-      if(PTT_PTT0 == 1){
-        PTT_PTT0 = 0; 
-      }else{ 
-        PTT_PTT0 = 1;
-      }
+    // check if button has been pressed
+      // initialize game if it hasn't been started before...
+      // make sure flag for starting game is set to 0
       
-      PTT_PTT1 = 0;   
-    }
-  
+    
+    // display game board
+    // evolve game board
+    // delay animation
     
     _FEED_COP(); /* feeds the watchdog timer */
   } /* loop forever */
@@ -149,8 +140,8 @@ interrupt 15 void TIM_ISR( void)
   // set TFLG1 bit
      TFLG1 = TFLG1 | 0x80; 
   	
-  	interuptFlag = 1; 	
-  	
+  	interuptFlag = 1;
+  	tickCounter++;  	
 }
 
 char  inchar(void) {
