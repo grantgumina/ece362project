@@ -1,0 +1,165 @@
+#include <hidef.h>      /* common defines and macros */
+#include "derivative.h"      /* derivative-specific definitions */
+#include <mc9s12c32.h>
+
+// All funtions after main should be initialized here
+void game(int w, int h);
+// Note: inchar and outchar can be used for debugging purposes
+
+char inchar(void);
+void outchar(char x);
+
+//  Variable declarations  	   			 		  			 		       
+int tenthsec = 0;  // One-tenth second flag
+int leftpb = 0;    // left pushbutton flag
+int rghtpb = 0;    // right pushbutton flag
+int runstp = 0;    // run/stop flag                         
+int rticnt = 0;    // RTICNT (variable)
+int prevpb = 0;    // previous state of pushbuttons (variable)
+
+
+int interuptFlag = 0;
+
+int h = 10;
+int w = 10;
+int board[30][30];
+int tempBoard[30][30];
+
+/***********************************************************************
+Initializations
+***********************************************************************/
+void  initializations(void) {
+  // Set the PLL speed (bus clock = 24 MHz)
+  CLKSEL = CLKSEL & 0x80; // disengage PLL from system
+  PLLCTL = PLLCTL | 0x40; // turn on PLL
+  SYNR = 0x02;            // set PLL multiplier
+  REFDV = 0;              // set PLL divider
+  while (!(CRGFLG & 0x08)){  }
+  CLKSEL = CLKSEL | 0x80; // engage PLL
+
+  // Disable watchdog timer (COPCTL register)
+  COPCTL = 0x40;    //COP off - RTI and COP stopped in BDM-mode
+  
+  
+  
+  /*; Initialize TIM Ch 7 (TC7) for periodic interrupts every 10.0 ms
+  ;    Enable timer subsystem                        
+  ;    Set channel 7 for output compare
+  ;    Set appropriate pre-scale factor and enable counter reset after OC7
+  ;    Set up channel 7 to generate 10 ms interrupt rate
+  ;    Initially disable TIM Ch 7 interrupts                                                                 
+  */                                                                 
+  //;  < add TIM initialization code here >
+  TSCR1 = 0x80; //enable TC7
+  TSCR2 = 0x0c; //set TIM prescale factor to 16 and enable counter reset after OC7
+
+  TIOS = 0x80; //set TIM TC7 for Output Compare
+  TIE = 0x80;  //enable TIM TC7 interrupt
+  TC7 = 15000;  //set up TIM TC7 to generate 0.1 ms interrupt rate
+  
+    
+  
+
+  // Initialize asynchronous serial port (SCI) for 9600 baud, no interrupts
+  SCIBDH =  0x00; //set baud rate to 9600
+  SCIBDL =  0x9C; //24,000,000 / 16 / 156 = 9600 (approx)  
+  SCICR1 =  0x00; //$9C = 156
+  SCICR2 =  0x0C; //initialize SCI for program-driven operation
+  
+  // Initialize the SPI to 6.25 MHz
+  SPICR1 = 0b01011000;
+  SPICR2 = 0;
+  SPIBR = 1;
+  
+  //set up leds for output
+  DDRT_DDRT0 = 1;
+  DDRT_DDRT1 = 1;
+
+  //  Initialize Port AD pins 7 and 6 for use as digital inputs
+  DDRAD = 0; 		//program port AD for input mode
+  ATDDIEN = 0xC0; //program PAD7 and PAD6 pins as digital inputs
+
+  //  Add additional port pin initializations here  (e.g., Other DDRs, Ports) 
+  //  Add RTI/interrupt initializations here
+
+  // build the game board
+  
+
+  
+
+}
+	 		  
+void evolve() {
+  int y;
+  for (y = 0; y < h; y++) {
+    int x;
+    for (x = 0; x < w; x++) {
+      int n = 0;
+      int y1;
+      for (y1 = y - 1; y1 <= y + 1; y1++) {
+        int x1;
+				for (x1 = x - 1; x1 <= x + 1; x1++) {
+					if (board[(y1 + h) % h][(x1 + w) % w]) {
+						n++;
+					}
+				}
+			}
+			
+			if (board[y][x]) {
+			  n--;
+			}
+
+      tempBoard[y][x] = (n == 3 || (n == 2 && board[y][x]));
+    }
+  }
+
+  for (y = 0; y < h; y++) {
+    int x;
+    for (x = 0; x < w; x++) {
+      board[y][x] = tempBoard[y][x];
+    }
+  }
+}
+	 		  			 		  		
+void main(void) {
+	initializations(); 		  			 		  		
+	EnableInterrupts;
+
+  for(;;) {
+  
+    if(interuptFlag){
+      interuptFlag = 0;
+      if(PTT_PTT0 == 1){
+        PTT_PTT0 = 0; 
+      }else{ 
+        PTT_PTT0 = 1;
+      }
+      
+      PTT_PTT1 = 0;   
+    }
+  
+    
+    _FEED_COP(); /* feeds the watchdog timer */
+  } /* loop forever */
+  /* make sure that you never leave main */
+}
+
+interrupt 15 void TIM_ISR( void)
+{
+  // set TFLG1 bit
+     TFLG1 = TFLG1 | 0x80; 
+  	
+  	interuptFlag = 1; 	
+  	
+}
+
+char  inchar(void) {
+  /* receives character from the terminal channel */
+        while (!(SCISR1 & 0x20)); /* wait for input */
+    return SCIDRL;
+}
+void outchar(char ch) {
+  /* sends a character to the terminal channel */
+    while (!(SCISR1 & 0x80));  /* wait for output buffer empty */
+    SCIDRL = ch;
+}
