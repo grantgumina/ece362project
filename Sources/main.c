@@ -141,8 +141,15 @@ void main(void) {
     }
     
     // display game board
+    
     // evolve game board
+    evolve();
+    
     // delay animation
+    int n = 0;
+    while(n < 100000) {
+      n++;
+    }
     
     _FEED_COP(); /* feeds the watchdog timer */
   } /* loop forever */
