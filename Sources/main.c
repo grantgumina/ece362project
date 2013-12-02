@@ -21,11 +21,13 @@ int rticnt = 0;                 // RTICNT (variable)
 int prevpb = 0;                 // previous state of pushbuttons (variable)
 int interuptFlag = 0;
 
-int h = 10;
-int w = 10;
-int board[30][30];
-int tempBoard[30][30];
-int tickCounter = 0;
+int h = 27;                     // height of the board
+int w = 21;                     // width of the board
+int n = 0;                      // silly global variable used in evolution delay
+int k = 0;                      // another silly global variable used in delay
+int board[27][21];              // array representing conway's game of life board
+int tempBoard[27][21];          // temperary game board for board evolution
+int tickCounter = 0;            // timer variable
 
 /***********************************************************************
 Initializations
@@ -70,11 +72,11 @@ void  initializations(void) {
   ATDDIEN = 0xC0;         //program PAD7 and PAD6 pins as digital inputs
 
   //  Add additional port pin initializations here  (e.g., Other DDRs, Ports) 
-  //  Add RTI/interrupt initializations here
-
-  // build the game board
+  // Initialize RTI for 2.048 ms interrupt rate  
+  RTICTL = 0x1F;
+  CRGINT = 0x80;
 }
-	 		  
+
 void evolve() {
   int y;
   for (y = 0; y < h; y++) {
@@ -112,17 +114,19 @@ void game() {
   for (x = 0; x < w; x++) {
     int y;
     for (y = 0; y < h; y++) {
-      //board[y][x] = rand() < RAND_MAX / 10 ? 1 : 0;
+      outchar('c');
+      board[y][x] = tickCounter;
     }
   }
 }
 	 		  			 		  		
 void main(void) {
+  DisableInterrupts;
 	initializations(); 		  			 		  		
 	EnableInterrupts;
 
   for(;;) {
-    // check if left button has been pressed (game started)
+    // check to see if user wants to start the game (presses left push button)
     if (leftpb == 1) {
       leftpb = 0;      
       // stop counter 
@@ -131,25 +135,33 @@ void main(void) {
       if (gameStarted == 0) {
         // make sure flag for starting game is set to 0
         gameStarted = 1;
+        //outchar('s'); // DEBUG
         game();
       }
     }
-    // check if right button has been pressed (game reset)
-    if (rghtpb == 2) {
+    
+    // check to see if the user would like to reset the game (presses right push button)
+    if (rghtpb == 1) {
+      rghtpb = 0;
       // reset the game
+      //outchar('r'); // DEBUG
       gameStarted = 0;
     }
     
     // display game board
     
     // evolve game board
-    evolve();
+    //evolve();
     
     // delay animation
-    int n = 0;
-    while(n < 100000) {
-      n++;
+    while(n <= 10000) {
+      while(k <= 10000) {
+        
+      }
+      k = 0;
     }
+    
+    n = 0;
     
     _FEED_COP(); /* feeds the watchdog timer */
   } /* loop forever */

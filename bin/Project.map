@@ -1,5 +1,5 @@
 *** EVALUATION ***
-PROGRAM "C:\Users\Grant\Desktop\Project\bin\Project.abs"
+PROGRAM "U:\ECE 362\ece362project\bin\Project.abs"
 
 *********************************************************************************************
 TARGET SECTION
@@ -23,8 +23,8 @@ Entry point: 0xC029 (_Startup)
 _startupData is allocated at 0xC031 and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
-  _Range   pZeroOut       0x900     18
-  _Copy    *toCopyDownBeg 0xC126
+  _Range   pZeroOut       0x900     1156
+  _Copy    *toCopyDownBeg 0xC17C
 } _startupData;
 
 *********************************************************************************************
@@ -33,8 +33,8 @@ Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
 .init                             49     R     0xC000     0xC030   ROM_C000
 .startData                        10     R     0xC031     0xC03A   ROM_C000
-.text                            235     R     0xC03B     0xC125   ROM_C000
-.copy                              9     R     0xC126     0xC12E   ROM_C000
+.text                            321     R     0xC03B     0xC17B   ROM_C000
+.copy                              9     R     0xC17C     0xC184   ROM_C000
 .stack                           256   R/W      0x800      0x8FF   RAM
 .data                              4   R/W      0x900      0x903   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
@@ -260,12 +260,13 @@ Section Name                    Size  Type     From       To       Segment
 .abs_section_17e                   2   N/I      0x17E      0x17F   .absSeg220
 .abs_section_fff0                  2     R     0xFFF0     0xFFF1   .absSeg221
 .abs_section_ffe0                  2     R     0xFFE0     0xFFE1   .absSeg222
-.bss                              14   R/W      0x904      0x911   RAM
+.bss                              18   R/W      0x904      0x915   RAM
+.common                         1134   R/W      0x916      0xD83   RAM
 .vectSeg223_vect                   2     R     0xFFFE     0xFFFF   .vectSeg223
 
 Summary of section sizes per section type:
-READ_ONLY (R):         135 (dec:      309)
-READ_WRITE (R/W):      112 (dec:      274)
+READ_ONLY (R):         18B (dec:      395)
+READ_WRITE (R/W):      584 (dec:     1412)
 NO_INIT (N/I):         104 (dec:      260)
 
 *********************************************************************************************
@@ -310,10 +311,10 @@ MODULE:                 -- mc9s12c32.c.o --
      _SYNR                                       34       1       1       1   .abs_section_34
      _REFDV                                      35       1       1       1   .abs_section_35
      _CRGFLG                                     37       1       1       2   .abs_section_37
-     _CRGINT                                     38       1       1       0   .abs_section_38
+     _CRGINT                                     38       1       1       1   .abs_section_38
      _CLKSEL                                     39       1       1       2   .abs_section_39
      _PLLCTL                                     3A       1       1       1   .abs_section_3a
-     _RTICTL                                     3B       1       1       0   .abs_section_3b
+     _RTICTL                                     3B       1       1       1   .abs_section_3b
      _COPCTL                                     3C       1       1       1   .abs_section_3c
      _ARMCOP                                     3F       1       1       0   .abs_section_3f
      _TIOS                                       40       1       1       1   .abs_section_40
@@ -339,10 +340,10 @@ MODULE:                 -- mc9s12c32.c.o --
      _PORTAD0                                    8F       1       1       4   .abs_section_8f
      _SCICR1                                     CA       1       1       1   .abs_section_ca
      _SCICR2                                     CB       1       1       1   .abs_section_cb
-     _SCISR1                                     CC       1       1       0   .abs_section_cc
+     _SCISR1                                     CC       1       1       1   .abs_section_cc
      _SCISR2                                     CD       1       1       0   .abs_section_cd
      _SCIDRH                                     CE       1       1       0   .abs_section_ce
-     _SCIDRL                                     CF       1       1       0   .abs_section_cf
+     _SCIDRL                                     CF       1       1       1   .abs_section_cf
      _SPICR1                                     D8       1       1       1   .abs_section_d8
      _SPICR2                                     D9       1       1       1   .abs_section_d9
      _SPIBR                                      DA       1       1       1   .abs_section_da
@@ -504,23 +505,27 @@ MODULE:                 -- mc9s12c32.c.o --
      _CANTXTSR                                  17E       2       2       0   .abs_section_17e
 MODULE:                 -- main.c.o --
 - PROCEDURES:
-     initializations                           C03B      4E      78       1   .text       
-     game                                      C089      29      41       1   .text       
-     main                                      C0B2      27      39       1   .text       
-     RTI_ISR                                   C0D9      3C      60       1   .text       
-     TIM_ISR                                   C115      11      17       1   .text       
+     initializations                           C03B      56      86       1   .text       
+     game                                      C091      42      66       1   .text       
+     main                                      C0D3      53      83       1   .text       
+     RTI_ISR                                   C126      3C      60       1   .text       
+     TIM_ISR                                   C162      11      17       1   .text       
+     outchar                                   C173       9       9       1   .text       
 - VARIABLES:
      h                                          900       2       2       1   .data       
      w                                          902       2       2       1   .data       
      leftpb                                     904       2       2       3   .bss        
-     rghtpb                                     906       2       2       1   .bss        
+     rghtpb                                     906       2       2       3   .bss        
      previousLeftButton                         908       2       2       2   .bss        
      previousRightButton                        90A       2       2       2   .bss        
-     gameStarted                                90C       2       2       2   .bss        
+     gameStarted                                90C       2       2       3   .bss        
      interuptFlag                               90E       2       2       1   .bss        
-     tickCounter                                910       2       2       3   .bss        
+     n                                          910       2       2       2   .bss        
+     k                                          912       2       2       2   .bss        
+     tickCounter                                914       2       2       4   .bss        
      _Vector_7                                 FFF0       2       2       0   .abs_section_fff0
      _Vector_15                                FFE0       2       2       0   .abs_section_ffe0
+     board                                      916     46E    1134       1   .common     
 MODULE:                 -- Start12.c.o --
 - PROCEDURES:
      Init                                      C000      29      41       1   .init       
@@ -535,7 +540,7 @@ MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
   mc9s12c32.c.o                              260      0      0
-  main.c.o                                    18    235      4
+  main.c.o                                  1156    321      4
   Start12.c.o                                  0     49      0
   other                                      256     12      9
 
@@ -543,12 +548,12 @@ MODULE STATISTIC
 SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 SECTION: ".text"
-  initializations game main RTI_ISR TIM_ISR 
+  initializations game main RTI_ISR TIM_ISR outchar 
 SECTION: ".data"
   h w 
 SECTION: ".bss"
   leftpb rghtpb previousLeftButton previousRightButton gameStarted 
-  interuptFlag tickCounter 
+  interuptFlag n k tickCounter 
 SECTION: ".init"
   Init _Startup 
 SECTION: ".abs_section_8"
@@ -997,6 +1002,8 @@ SECTION: ".abs_section_fff0"
   _Vector_7 
 SECTION: ".abs_section_ffe0"
   _Vector_15 
+SECTION: ".common"
+  board 
 
 *********************************************************************************************
 OBJECT LIST SORTED BY ADDRESS
@@ -1038,10 +1045,10 @@ OBJECT LIST SORTED BY ADDRESS
      _SYNR                                       34       1       1       1   .abs_section_34
      _REFDV                                      35       1       1       1   .abs_section_35
      _CRGFLG                                     37       1       1       2   .abs_section_37
-     _CRGINT                                     38       1       1       0   .abs_section_38
+     _CRGINT                                     38       1       1       1   .abs_section_38
      _CLKSEL                                     39       1       1       2   .abs_section_39
      _PLLCTL                                     3A       1       1       1   .abs_section_3a
-     _RTICTL                                     3B       1       1       0   .abs_section_3b
+     _RTICTL                                     3B       1       1       1   .abs_section_3b
      _COPCTL                                     3C       1       1       1   .abs_section_3c
      _ARMCOP                                     3F       1       1       0   .abs_section_3f
      _TIOS                                       40       1       1       1   .abs_section_40
@@ -1088,10 +1095,10 @@ OBJECT LIST SORTED BY ADDRESS
      _SCIBD                                      C8       2       2       2   .abs_section_c8
      _SCICR1                                     CA       1       1       1   .abs_section_ca
      _SCICR2                                     CB       1       1       1   .abs_section_cb
-     _SCISR1                                     CC       1       1       0   .abs_section_cc
+     _SCISR1                                     CC       1       1       1   .abs_section_cc
      _SCISR2                                     CD       1       1       0   .abs_section_cd
      _SCIDRH                                     CE       1       1       0   .abs_section_ce
-     _SCIDRL                                     CF       1       1       0   .abs_section_cf
+     _SCIDRL                                     CF       1       1       1   .abs_section_cf
      _SPICR1                                     D8       1       1       1   .abs_section_d8
      _SPICR2                                     D9       1       1       1   .abs_section_d9
      _SPIBR                                      DA       1       1       1   .abs_section_da
@@ -1226,19 +1233,23 @@ OBJECT LIST SORTED BY ADDRESS
      h                                          900       2       2       1   .data       
      w                                          902       2       2       1   .data       
      leftpb                                     904       2       2       3   .bss        
-     rghtpb                                     906       2       2       1   .bss        
+     rghtpb                                     906       2       2       3   .bss        
      previousLeftButton                         908       2       2       2   .bss        
      previousRightButton                        90A       2       2       2   .bss        
-     gameStarted                                90C       2       2       2   .bss        
+     gameStarted                                90C       2       2       3   .bss        
      interuptFlag                               90E       2       2       1   .bss        
-     tickCounter                                910       2       2       3   .bss        
+     n                                          910       2       2       2   .bss        
+     k                                          912       2       2       2   .bss        
+     tickCounter                                914       2       2       4   .bss        
+     board                                      916     46E    1134       1   .common     
      Init                                      C000      29      41       1   .init       
      _Startup                                  C029       8       8       0   .init       
-     initializations                           C03B      4E      78       1   .text       
-     game                                      C089      29      41       1   .text       
-     main                                      C0B2      27      39       1   .text       
-     RTI_ISR                                   C0D9      3C      60       1   .text       
-     TIM_ISR                                   C115      11      17       1   .text       
+     initializations                           C03B      56      86       1   .text       
+     game                                      C091      42      66       1   .text       
+     main                                      C0D3      53      83       1   .text       
+     RTI_ISR                                   C126      3C      60       1   .text       
+     TIM_ISR                                   C162      11      17       1   .text       
+     outchar                                   C173       9       9       1   .text       
      _Vector_15                                FFE0       2       2       0   .abs_section_ffe0
      _Vector_7                                 FFF0       2       2       0   .abs_section_fff0
 
@@ -1247,27 +1258,27 @@ UNUSED-OBJECTS SECTION
 ---------------------------------------------------------------------------------------------
 NOT USED PROCEDURES
 main.c.o:
-  evolve inchar outchar 
+  evolve inchar 
 NOT USED VARIABLES
 main.c.o:
-  tenthsec rticnt prevpb board tempBoard 
+  tenthsec rticnt prevpb tempBoard 
 
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xC126 ---- SIZE       4 ---
+------- ROM-ADDRESS: 0xC17C ---- SIZE       4 ---
 Filling bytes inserted
  00030901
-------- ROM-ADDRESS: 0xC12A ---- RAM-ADDRESS: 0x901 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC180 ---- RAM-ADDRESS: 0x901 ---- SIZE       1 ---
 Name of initialized Object : h:1
- 0A
-------- ROM-ADDRESS: 0xC12B ---- SIZE       1 ---
+ 1B
+------- ROM-ADDRESS: 0xC181 ---- SIZE       1 ---
 Filling bytes inserted
  00
-------- ROM-ADDRESS: 0xC12C ---- RAM-ADDRESS: 0x903 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC182 ---- RAM-ADDRESS: 0x903 ---- SIZE       1 ---
 Name of initialized Object : w:1
- 0A
-------- ROM-ADDRESS: 0xC12D ---- SIZE       2 ---
+ 15
+------- ROM-ADDRESS: 0xC183 ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -1278,13 +1289,15 @@ Init                      USES _startupData
 _Startup                  USES __SEG_END_SSTACK Init main 
 initializations           USES _CLKSEL _PLLCTL _SYNR _REFDV _CRGFLG _COPCTL 
                                 _TSCR1 _TSCR2 _TIOS _TIE _TC7 _SCIBD _SCICR1 _SCICR2 
-                                _SPICR1 _SPICR2 _SPIBR _DDRT _DDRAD _ATDDIEN 
-game                      USES h w 
+                                _SPICR1 _SPICR2 _SPIBR _DDRT _DDRAD _ATDDIEN _RTICTL 
+                                _CRGINT 
+game                      USES outchar tickCounter board h w 
 main                      USES initializations leftpb tickCounter gameStarted 
-                                game 
+                                game rghtpb k n 
 RTI_ISR                   USES _CRGFLG previousLeftButton _PORTAD0 leftpb 
                                 previousRightButton rghtpb 
 TIM_ISR                   USES _TFLG1 interuptFlag tickCounter 
+outchar                   USES _SCISR1 _SCIDRL 
 _Vector_15                USES TIM_ISR 
 _Vector_7                 USES RTI_ISR 
 
@@ -1298,7 +1311,9 @@ DEPENDENCY TREE
  |  +- initializations     
  |  |    
  |  +- game                
- |       
+ |     | 
+ |     +- outchar             
+ |          
  +- _Startup            
     | 
     +- Init                
@@ -1320,5 +1335,5 @@ STATISTIC SECTION
 ExeFile:
 --------
 Number of blocks to be downloaded: 7
-Total size of all blocks to be downloaded: 309
+Total size of all blocks to be downloaded: 395
 
