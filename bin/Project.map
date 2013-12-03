@@ -24,7 +24,7 @@ _startupData is allocated at 0xC031 and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
   _Range   pZeroOut       0x900     1156
-  _Copy    *toCopyDownBeg 0xC17C
+  _Copy    *toCopyDownBeg 0xC16F
 } _startupData;
 
 *********************************************************************************************
@@ -33,8 +33,8 @@ Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
 .init                             49     R     0xC000     0xC030   ROM_C000
 .startData                        10     R     0xC031     0xC03A   ROM_C000
-.text                            321     R     0xC03B     0xC17B   ROM_C000
-.copy                              9     R     0xC17C     0xC184   ROM_C000
+.text                            308     R     0xC03B     0xC16E   ROM_C000
+.copy                              9     R     0xC16F     0xC177   ROM_C000
 .stack                           256   R/W      0x800      0x8FF   RAM
 .data                              4   R/W      0x900      0x903   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
@@ -265,7 +265,7 @@ Section Name                    Size  Type     From       To       Segment
 .vectSeg223_vect                   2     R     0xFFFE     0xFFFF   .vectSeg223
 
 Summary of section sizes per section type:
-READ_ONLY (R):         18B (dec:      395)
+READ_ONLY (R):         17E (dec:      382)
 READ_WRITE (R/W):      584 (dec:     1412)
 NO_INIT (N/I):         104 (dec:      260)
 
@@ -340,10 +340,10 @@ MODULE:                 -- mc9s12c32.c.o --
      _PORTAD0                                    8F       1       1       4   .abs_section_8f
      _SCICR1                                     CA       1       1       1   .abs_section_ca
      _SCICR2                                     CB       1       1       1   .abs_section_cb
-     _SCISR1                                     CC       1       1       1   .abs_section_cc
+     _SCISR1                                     CC       1       1       0   .abs_section_cc
      _SCISR2                                     CD       1       1       0   .abs_section_cd
      _SCIDRH                                     CE       1       1       0   .abs_section_ce
-     _SCIDRL                                     CF       1       1       1   .abs_section_cf
+     _SCIDRL                                     CF       1       1       0   .abs_section_cf
      _SPICR1                                     D8       1       1       1   .abs_section_d8
      _SPICR2                                     D9       1       1       1   .abs_section_d9
      _SPIBR                                      DA       1       1       1   .abs_section_da
@@ -506,11 +506,10 @@ MODULE:                 -- mc9s12c32.c.o --
 MODULE:                 -- main.c.o --
 - PROCEDURES:
      initializations                           C03B      56      86       1   .text       
-     game                                      C091      42      66       1   .text       
-     main                                      C0D3      53      83       1   .text       
-     RTI_ISR                                   C126      3C      60       1   .text       
-     TIM_ISR                                   C162      11      17       1   .text       
-     outchar                                   C173       9       9       1   .text       
+     game                                      C091      3D      61       1   .text       
+     main                                      C0CE      54      84       1   .text       
+     RTI_ISR                                   C122      3C      60       1   .text       
+     TIM_ISR                                   C15E      11      17       1   .text       
 - VARIABLES:
      h                                          900       2       2       1   .data       
      w                                          902       2       2       1   .data       
@@ -540,7 +539,7 @@ MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
   mc9s12c32.c.o                              260      0      0
-  main.c.o                                  1156    321      4
+  main.c.o                                  1156    308      4
   Start12.c.o                                  0     49      0
   other                                      256     12      9
 
@@ -548,7 +547,7 @@ MODULE STATISTIC
 SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 SECTION: ".text"
-  initializations game main RTI_ISR TIM_ISR outchar 
+  initializations game main RTI_ISR TIM_ISR 
 SECTION: ".data"
   h w 
 SECTION: ".bss"
@@ -1095,10 +1094,10 @@ OBJECT LIST SORTED BY ADDRESS
      _SCIBD                                      C8       2       2       2   .abs_section_c8
      _SCICR1                                     CA       1       1       1   .abs_section_ca
      _SCICR2                                     CB       1       1       1   .abs_section_cb
-     _SCISR1                                     CC       1       1       1   .abs_section_cc
+     _SCISR1                                     CC       1       1       0   .abs_section_cc
      _SCISR2                                     CD       1       1       0   .abs_section_cd
      _SCIDRH                                     CE       1       1       0   .abs_section_ce
-     _SCIDRL                                     CF       1       1       1   .abs_section_cf
+     _SCIDRL                                     CF       1       1       0   .abs_section_cf
      _SPICR1                                     D8       1       1       1   .abs_section_d8
      _SPICR2                                     D9       1       1       1   .abs_section_d9
      _SPIBR                                      DA       1       1       1   .abs_section_da
@@ -1245,11 +1244,10 @@ OBJECT LIST SORTED BY ADDRESS
      Init                                      C000      29      41       1   .init       
      _Startup                                  C029       8       8       0   .init       
      initializations                           C03B      56      86       1   .text       
-     game                                      C091      42      66       1   .text       
-     main                                      C0D3      53      83       1   .text       
-     RTI_ISR                                   C126      3C      60       1   .text       
-     TIM_ISR                                   C162      11      17       1   .text       
-     outchar                                   C173       9       9       1   .text       
+     game                                      C091      3D      61       1   .text       
+     main                                      C0CE      54      84       1   .text       
+     RTI_ISR                                   C122      3C      60       1   .text       
+     TIM_ISR                                   C15E      11      17       1   .text       
      _Vector_15                                FFE0       2       2       0   .abs_section_ffe0
      _Vector_7                                 FFF0       2       2       0   .abs_section_fff0
 
@@ -1258,27 +1256,28 @@ UNUSED-OBJECTS SECTION
 ---------------------------------------------------------------------------------------------
 NOT USED PROCEDURES
 main.c.o:
-  evolve inchar 
+  evolve turnOnRow turnOnCol setDataBit shiftOut displayBoard displayColumn 
+  shiftOutX shiftOutY setSPIDataOnes inchar outchar 
 NOT USED VARIABLES
 main.c.o:
-  tenthsec rticnt prevpb tempBoard 
+  tenthsec rticnt prevpb tempBoard SPIData yRegIndex 
 
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xC17C ---- SIZE       4 ---
+------- ROM-ADDRESS: 0xC16F ---- SIZE       4 ---
 Filling bytes inserted
  00030901
-------- ROM-ADDRESS: 0xC180 ---- RAM-ADDRESS: 0x901 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC173 ---- RAM-ADDRESS: 0x901 ---- SIZE       1 ---
 Name of initialized Object : h:1
  1B
-------- ROM-ADDRESS: 0xC181 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC174 ---- SIZE       1 ---
 Filling bytes inserted
  00
-------- ROM-ADDRESS: 0xC182 ---- RAM-ADDRESS: 0x903 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC175 ---- RAM-ADDRESS: 0x903 ---- SIZE       1 ---
 Name of initialized Object : w:1
  15
-------- ROM-ADDRESS: 0xC183 ---- SIZE       2 ---
+------- ROM-ADDRESS: 0xC176 ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -1291,13 +1290,12 @@ initializations           USES _CLKSEL _PLLCTL _SYNR _REFDV _CRGFLG _COPCTL
                                 _TSCR1 _TSCR2 _TIOS _TIE _TC7 _SCIBD _SCICR1 _SCICR2 
                                 _SPICR1 _SPICR2 _SPIBR _DDRT _DDRAD _ATDDIEN _RTICTL 
                                 _CRGINT 
-game                      USES outchar tickCounter board h w 
+game                      USES tickCounter board h w 
 main                      USES initializations leftpb tickCounter gameStarted 
                                 game rghtpb k n 
 RTI_ISR                   USES _CRGFLG previousLeftButton _PORTAD0 leftpb 
                                 previousRightButton rghtpb 
 TIM_ISR                   USES _TFLG1 interuptFlag tickCounter 
-outchar                   USES _SCISR1 _SCIDRL 
 _Vector_15                USES TIM_ISR 
 _Vector_7                 USES RTI_ISR 
 
@@ -1311,9 +1309,7 @@ DEPENDENCY TREE
  |  +- initializations     
  |  |    
  |  +- game                
- |     | 
- |     +- outchar             
- |          
+ |       
  +- _Startup            
     | 
     +- Init                
@@ -1334,6 +1330,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 7
-Total size of all blocks to be downloaded: 395
+Number of blocks to be downloaded: 6
+Total size of all blocks to be downloaded: 382
 

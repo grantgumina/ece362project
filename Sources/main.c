@@ -5,7 +5,17 @@
 // All funtions after main should be initialized here
 void game();
 void evolve();
-// Note: inchar and outchar can be used for debugging purposes
+void shiftOutRow(int r);
+void shiftOutCol(int c);
+void turnOnCol(int c);
+void turnOnRow(int r);
+void setDataBit(int bitIndex, int value);
+void shiftOut();
+void displayBoard();
+void displayColumn(int column);
+void shiftOutX();
+void shiftOutY();
+void setSPIDataOnes();
 
 char inchar(void);
 void outchar(char x);
@@ -16,7 +26,7 @@ int leftpb = 0;                 // left pushbutton flag
 int rghtpb = 0;                 // right pushbutton flag
 int previousLeftButton    = 0;  // previous left push button state
 int previousRightButton = 0;    // previous right push button state
-int gameStarted = 0;            // toggle for starting the game                         
+int gameStarted = 0;            // toggle for starting the game                        
 int rticnt = 0;                 // RTICNT (variable)
 int prevpb = 0;                 // previous state of pushbuttons (variable)
 int interuptFlag = 0;
@@ -28,6 +38,8 @@ int k = 0;                      // another silly global variable used in delay
 int board[27][21];              // array representing conway's game of life board
 int tempBoard[27][21];          // temperary game board for board evolution
 int tickCounter = 0;            // timer variable
+char SPIData[4];                // the data we will put on to the registers, LSB first
+int yRegIndex;
 
 /***********************************************************************
 Initializations
@@ -59,6 +71,7 @@ void  initializations(void) {
   SCICR2 =  0x0C;         //initialize SCI for program-driven operation
   
   // Initialize the SPI to 6.25 MHz
+  // TODO: Make sure is LSB first
   SPICR1 = 0b01011000;
   SPICR2 = 0;
   SPIBR = 1;
@@ -77,6 +90,9 @@ void  initializations(void) {
   CRGINT = 0x80;
 }
 
+/* 
+ * GAME FUNCTIONS
+ */
 void evolve() {
   int y;
   for (y = 0; y < h; y++) {
@@ -114,9 +130,97 @@ void game() {
   for (x = 0; x < w; x++) {
     int y;
     for (y = 0; y < h; y++) {
-      outchar('c');
       board[y][x] = tickCounter;
     }
+  }
+}
+
+/*
+ * SHIFTING/DISPLAY FUNCTIONS
+ */
+void turnOnRow(int r) {
+  int x;
+  for (x = 0; x < w; x++) {
+    // turn on this LED
+    board[r][x] = 1;
+  }
+}
+
+void turnOnCol(int c) {
+  // iterate through all 21 columns
+  int x;
+  for (x = 0; x < w; x++) {
+    // turn on this LED
+    board[c][x] = 1;
+  }
+}
+
+void setDataBit(int bitIndex, int value) { 
+  int desiredCharIndex = bitIndex / 8;
+  int innerIndex = bitIndex % 8;
+  char mask = 1 << innerIndex;
+  if (value == 1) {
+    SPIData[desiredCharIndex] |= mask;
+  } else if (value == 0) {
+    mask = ~mask;
+    SPIData[desiredCharIndex] &= mask;
+  }
+}
+ 
+void shiftOut() {
+  int i;
+  for (i=0; i < 4; i++ ) {
+    // read the SPTEF bit, continue if bit is 1
+    while(!SPISR_SPTEF);
+    // write data to SPI data register
+    SPIDR = SPIData[i];
+  }
+}
+
+void displayBoard() {
+  int i,x,y;
+  for (i=0; i < w; i++) {
+    displayColumn(i);
+    
+    // For testing, arbitrary delay
+    x = 10000;
+    while (x-->0) {
+      y = 10000;
+      while (y-->0){
+      }
+    }
+    // End arbitrary delay
+  }
+}
+
+void displayColumn(int column) {
+  /* Set up X register */
+  setSPIDataOnes();
+  setDataBit(31 - column, 0);
+  shiftOutX();
+  
+  /* Set up Y register */
+  // yRegIndex had to be declared globally
+  for (yRegIndex=0; yRegIndex < h; yRegIndex++) {
+    setDataBit(31 - yRegIndex, board[column][yRegIndex]);   
+  }
+  shiftOutY();
+}
+
+void shiftOutX() {
+  PTT_PTT7 = 1; // Left side is X register
+  shiftOut();
+}
+
+void shiftOutY() {
+  PTT_PTT7 = 0; // Right side is Y register
+  shiftOut();
+}
+
+void setSPIDataOnes() {
+  int i;
+  for (i=0; i < 4; i++){
+    SPIData[i] = 1; 
   }
 }
 	 		  			 		  		
@@ -191,10 +295,13 @@ interrupt 7 void RTI_ISR(void)
 interrupt 15 void TIM_ISR( void)
 {
   // set TFLG1 bit
-     TFLG1 = TFLG1 | 0x80; 
-  	
-  	interuptFlag = 1;
-  	tickCounter++;  	
+  TFLG1 = TFLG1 | 0x80; 
+  interuptFlag = 1;
+  tickCounter++;  	
+  
+  if (gameStarted == 1) {
+    // set display board flag
+  }
 }
 
 char  inchar(void) {
