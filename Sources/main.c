@@ -262,37 +262,31 @@ void delay(){
    } 
   }
 }
+
+int colIndex = 0;
 	 		  			 		  		
 void main(void) {
   DisableInterrupts;
 	initializations(); 		  			 		  		
 	EnableInterrupts;
   
+  for(;;) {
+  
   /* TEST CODE */
   
-  setSPIDataZero();
-  setSPIDataBit(31, 0);
-  setSPIDataBit(29, 1);
-  setSPIDataBit(27, 1);
-  setSPIDataBit(25, 1);
-  setSPIDataBit(23, 1);
-  setSPIDataBit(21, 1);
-  setSPIDataBit(19, 1);
-  shiftOutY();
-  setSPIDataBit(17, 1);
-  setSPIDataBit(15, 1);
-  setSPIDataBit(13, 1);
-  setSPIDataBit(11, 1);
-  setSPIDataBit(9, 1);
-  setSPIDataBit(7, 1);
-  setSPIDataBit(5, 1);
-  setSPIDataBit(3, 1);
-  setSPIDataBit(1, 1);
+  if (colIndex == w) {
+    colIndex = 0;
+  }
+  setSPIDataOnes();  
+  setSPIDataBit(31 - colIndex, 0);
   shiftOutX();
+  setSPIDataBit(31 - colIndex, 1); 
+  shiftOutY();
+  colIndex++;
   
   //shiftOutY();
   /* END TEST CODE */
-  for(;;) {
+  
   /* REAL CODE */
   /*
     // check to see if user wants to start the game (presses left push button)
