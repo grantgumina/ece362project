@@ -15,6 +15,7 @@ void displayBoard();
 void displayColumn(int column);
 void shiftOutX();
 void shiftOutY();
+void setSPIDataZero();
 void setSPIDataOnes();
 
 char inchar(void);
@@ -147,8 +148,9 @@ void game() {
   }
 }
 
-/*
- * SHIFTING/DISPLAY FUNCTIONS
+/* 
+ * DISPLAY FUNCTIONS 
+ * Intended to be called upon by user. Abstracts all SPI functionality.
  */
 void turnOnRow(int r) {
   int x;
@@ -165,29 +167,6 @@ void turnOnCol(int c) {
     board[x][c] = 1;
   }
 }
-
-void setDataBit(int bitIndex, int value) { 
-  int desiredCharIndex = bitIndex / 8;
-  int innerIndex = bitIndex % 8;
-  char mask = 1 << innerIndex;
-  if (value == 1) {
-    SPIData[desiredCharIndex] |= mask;
-  } else if (value == 0) {
-    mask = ~mask;
-    SPIData[desiredCharIndex] &= mask;
-  }
-}
- 
-void shiftOut() {
-  int i;
-  for (i=0; i < 4; i++ ) {
-    // read the SPTEF bit, continue if bit is 1
-    while(!SPISR_SPTEF);
-    // write data to SPI data register
-    SPIDR = SPIData[i];
-  }
-}
-
 void displayBoard() {
   int i,x,y;
   for (i=0; i < w; i++) {
@@ -216,6 +195,32 @@ void displayColumn(int column) {
     setDataBit(31 - yRegIndex, board[column][yRegIndex]);   
   }
   shiftOutY();
+}             
+
+/* 
+ * SPI/Shifting Functions 
+ * Helper functions for display functions. Interface with SPI.
+ */
+void setDataBit(int bitIndex, int value) { 
+  int desiredCharIndex = bitIndex / 8;
+  int innerIndex = bitIndex % 8;
+  char mask = 1 << innerIndex;
+  if (value == 1) {
+    SPIData[desiredCharIndex] |= mask;
+  } else if (value == 0) {
+    mask = ~mask;
+    SPIData[desiredCharIndex] &= mask;
+  }
+}
+ 
+void shiftOut() {
+  int i;
+  for (i=0; i < 4; i++ ) {
+    // read the SPTEF bit, continue if bit is 1
+    while(!SPISR_SPTEF);
+    // write data to SPI data register
+    SPIDR = SPIData[i];
+  }
 }
 
 void shiftOutX() {
@@ -228,10 +233,18 @@ void shiftOutY() {
   shiftOut();
 }
 
+
+void setSPIDataZero() {
+  int i;
+  for (i=0; i < 32; i++){
+    setDataBit(i, 0);
+  }
+}
+
 void setSPIDataOnes() {
   int i;
-  for (i=0; i < 4; i++){
-    SPIData[i] = 1; 
+  for (i=0; i < 32; i++){
+    setDataBit(i, 1);
   }
 }
 	 		  			 		  		
@@ -240,11 +253,11 @@ void main(void) {
 	initializations(); 		  			 		  		
 	EnableInterrupts;
   
-  /* TEST INITIALIZATION */
-  setSPIDataOnes();
-  shiftOutX();
-  shiftOutY();
-  /* END TEST INITIALIZATION */
+  /* TEST CODE */
+  displayColumn(1);
+  
+  //shiftOutY();
+  /* END TEST CODE */
   for(;;) {
   /* REAL CODE */
   /*
