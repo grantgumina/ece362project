@@ -24,8 +24,8 @@ Entry point: 0xC029 (_Startup)
 _startupData is allocated at 0xC031 and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
-  _Range   pZeroOut       0x900     30
-  _Copy    *toCopyDownBeg 0xC205
+  _Range   pZeroOut       0x900     32
+  _Copy    *toCopyDownBeg 0xC21B
 } _startupData;
 
 *********************************************************************************************
@@ -34,10 +34,10 @@ Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
 .init                             49     R     0xC000     0xC030   ROM_C000
 .startData                        10     R     0xC031     0xC03A   ROM_C000
-.text                            450     R     0xC03B     0xC1FC   ROM_C000
-.copy                             10     R     0xC205     0xC20E   ROM_C000
+.text                            472     R     0xC03B     0xC212   ROM_C000
+.copy                             12     R     0xC21B     0xC226   ROM_C000
 .stack                           256   R/W      0x800      0x8FF   RAM
-.data                              4   R/W      0x900      0x903   RAM
+.data                              6   R/W      0x900      0x905   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
 .abs_section_a                     1   N/I        0xA        0xA   .absSeg2
@@ -261,14 +261,14 @@ Section Name                    Size  Type     From       To       Segment
 .abs_section_17e                   2   N/I      0x17E      0x17F   .absSeg220
 .abs_section_fff0                  2     R     0xFFF0     0xFFF1   .absSeg221
 .abs_section_ffe0                  2     R     0xFFE0     0xFFE1   .absSeg222
-.bss                              22   R/W      0x904      0x919   RAM
-.common                            4   R/W      0x91A      0x91D   RAM
-RUNTIME                            8     R     0xC1FD     0xC204   ROM_C000
+.bss                              22   R/W      0x906      0x91B   RAM
+.common                            4   R/W      0x91C      0x91F   RAM
+RUNTIME                            8     R     0xC213     0xC21A   ROM_C000
 .vectSeg223_vect                   2     R     0xFFFE     0xFFFF   .vectSeg223
 
 Summary of section sizes per section type:
-READ_ONLY (R):         215 (dec:      533)
-READ_WRITE (R/W):      11E (dec:      286)
+READ_ONLY (R):         22D (dec:      557)
+READ_WRITE (R/W):      120 (dec:      288)
 NO_INIT (N/I):         104 (dec:      260)
 
 *********************************************************************************************
@@ -513,27 +513,28 @@ MODULE:                 -- main.c.o --
      shiftOutX                                 C106       A      10       1   .text       
      shiftOutY                                 C110       A      10       1   .text       
      setSPIDataOnes                            C11A      17      23       1   .text       
-     delay                                     C131      1F      31       2   .text       
-     main                                      C150      47      71       1   .text       
-     RTI_ISR                                   C197      3C      60       1   .text       
-     TIM_ISR                                   C1D3      2A      42       1   .text       
+     delay                                     C131      1F      31       3   .text       
+     main                                      C150      5D      93       1   .text       
+     RTI_ISR                                   C1AD      3C      60       1   .text       
+     TIM_ISR                                   C1E9      2A      42       1   .text       
 - VARIABLES:
      TICKS_BETWEEN_EVOLUTIONS                   900       2       2       1   .data       
      w                                          902       2       2       1   .data       
-     leftpb                                     904       2       2       1   .bss        
-     rghtpb                                     906       2       2       1   .bss        
-     previousLeftButton                         908       2       2       2   .bss        
-     previousRightButton                        90A       2       2       2   .bss        
-     gameStarted                                90C       2       2       1   .bss        
-     evolveFlag                                 90E       2       2       1   .bss        
-     displayBoardFlag                           910       2       2       1   .bss        
-     interuptFlag                               912       2       2       1   .bss        
-     ticksSinceLastEvolution                    914       2       2       2   .bss        
-     tickCounter                                916       2       2       2   .bss        
-     colIndex                                   918       2       2       6   .bss        
+     fuck                                       904       2       2       3   .data       
+     leftpb                                     906       2       2       1   .bss        
+     rghtpb                                     908       2       2       1   .bss        
+     previousLeftButton                         90A       2       2       2   .bss        
+     previousRightButton                        90C       2       2       2   .bss        
+     gameStarted                                90E       2       2       1   .bss        
+     evolveFlag                                 910       2       2       1   .bss        
+     displayBoardFlag                           912       2       2       1   .bss        
+     interuptFlag                               914       2       2       1   .bss        
+     ticksSinceLastEvolution                    916       2       2       2   .bss        
+     tickCounter                                918       2       2       2   .bss        
+     colIndex                                   91A       2       2       6   .bss        
      _Vector_7                                 FFF0       2       2       0   .abs_section_fff0
      _Vector_15                                FFE0       2       2       0   .abs_section_ffe0
-     SPIData                                    91A       4       4       4   .common     
+     SPIData                                    91C       4       4       4   .common     
 MODULE:                 -- Start12.c.o --
 - PROCEDURES:
      Init                                      C000      29      41       1   .init       
@@ -544,7 +545,7 @@ MODULE:                 -- Start12.c.o --
      __SEG_END_SSTACK                           900       0       0       1               
 MODULE:                 -- rtshc12.c.o (ansisi.lib) --
 - PROCEDURES:
-     _BSHL                                     C1FD       8       8       1   RUNTIME     
+     _BSHL                                     C213       8       8       1   RUNTIME     
 - VARIABLES:
 
 *********************************************************************************************
@@ -552,10 +553,10 @@ MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
   mc9s12c32.c.o                              260      0      0
-  main.c.o                                    30    450      4
+  main.c.o                                    32    472      4
   Start12.c.o                                  0     49      0
   rtshc12.c.o (ansisi.lib)                     0      8      0
-  other                                      256     12     10
+  other                                      256     12     12
 
 *********************************************************************************************
 SECTION USE IN OBJECT-ALLOCATION SECTION
@@ -564,7 +565,7 @@ SECTION: ".text"
   initializations setSPIDataBit shiftOut shiftOutX shiftOutY setSPIDataOnes 
   delay main RTI_ISR TIM_ISR 
 SECTION: ".data"
-  TICKS_BETWEEN_EVOLUTIONS w 
+  TICKS_BETWEEN_EVOLUTIONS w fuck 
 SECTION: ".bss"
   leftpb rghtpb previousLeftButton previousRightButton gameStarted evolveFlag 
   displayBoardFlag interuptFlag ticksSinceLastEvolution tickCounter colIndex 
@@ -1248,18 +1249,19 @@ OBJECT LIST SORTED BY ADDRESS
      _PPSAD                                     275       1       1       0   .abs_section_275
      TICKS_BETWEEN_EVOLUTIONS                   900       2       2       1   .data       
      w                                          902       2       2       1   .data       
-     leftpb                                     904       2       2       1   .bss        
-     rghtpb                                     906       2       2       1   .bss        
-     previousLeftButton                         908       2       2       2   .bss        
-     previousRightButton                        90A       2       2       2   .bss        
-     gameStarted                                90C       2       2       1   .bss        
-     evolveFlag                                 90E       2       2       1   .bss        
-     displayBoardFlag                           910       2       2       1   .bss        
-     interuptFlag                               912       2       2       1   .bss        
-     ticksSinceLastEvolution                    914       2       2       2   .bss        
-     tickCounter                                916       2       2       2   .bss        
-     colIndex                                   918       2       2       6   .bss        
-     SPIData                                    91A       4       4       4   .common     
+     fuck                                       904       2       2       3   .data       
+     leftpb                                     906       2       2       1   .bss        
+     rghtpb                                     908       2       2       1   .bss        
+     previousLeftButton                         90A       2       2       2   .bss        
+     previousRightButton                        90C       2       2       2   .bss        
+     gameStarted                                90E       2       2       1   .bss        
+     evolveFlag                                 910       2       2       1   .bss        
+     displayBoardFlag                           912       2       2       1   .bss        
+     interuptFlag                               914       2       2       1   .bss        
+     ticksSinceLastEvolution                    916       2       2       2   .bss        
+     tickCounter                                918       2       2       2   .bss        
+     colIndex                                   91A       2       2       6   .bss        
+     SPIData                                    91C       4       4       4   .common     
      Init                                      C000      29      41       1   .init       
      _Startup                                  C029       8       8       0   .init       
      initializations                           C03B      6E     110       1   .text       
@@ -1268,11 +1270,11 @@ OBJECT LIST SORTED BY ADDRESS
      shiftOutX                                 C106       A      10       1   .text       
      shiftOutY                                 C110       A      10       1   .text       
      setSPIDataOnes                            C11A      17      23       1   .text       
-     delay                                     C131      1F      31       2   .text       
-     main                                      C150      47      71       1   .text       
-     RTI_ISR                                   C197      3C      60       1   .text       
-     TIM_ISR                                   C1D3      2A      42       1   .text       
-     _BSHL                                     C1FD       8       8       1   RUNTIME     
+     delay                                     C131      1F      31       3   .text       
+     main                                      C150      5D      93       1   .text       
+     RTI_ISR                                   C1AD      3C      60       1   .text       
+     TIM_ISR                                   C1E9      2A      42       1   .text       
+     _BSHL                                     C213       8       8       1   RUNTIME     
      _Vector_15                                FFE0       2       2       0   .abs_section_ffe0
      _Vector_7                                 FFF0       2       2       0   .abs_section_fff0
 
@@ -1292,26 +1294,29 @@ rtshc12.c.o (ansisi.lib):
   _FPCMP 
 NOT USED VARIABLES
 main.c.o:
-  h tenthsec rticnt prevpb fuck shit board tempBoard yRegIndex 
+  h tenthsec rticnt prevpb shit board tempBoard yRegIndex 
 rtshc12.c.o (ansisi.lib):
   _PowOfTwo_8 _PowOfTwo_16 _PowOfTwo_32 errno 
 
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xC205 ---- SIZE       4 ---
+------- ROM-ADDRESS: 0xC21B ---- SIZE       4 ---
 Filling bytes inserted
- 00040900
-------- ROM-ADDRESS: 0xC209 ---- RAM-ADDRESS: 0x900 ---- SIZE       2 ---
+ 00060900
+------- ROM-ADDRESS: 0xC21F ---- RAM-ADDRESS: 0x900 ---- SIZE       2 ---
 Name of initialized Object : TICKS_BETWEEN_EVOLUTIONS
  01F4
-------- ROM-ADDRESS: 0xC20B ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC221 ---- SIZE       1 ---
 Filling bytes inserted
  00
-------- ROM-ADDRESS: 0xC20C ---- RAM-ADDRESS: 0x903 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC222 ---- RAM-ADDRESS: 0x903 ---- SIZE       1 ---
 Name of initialized Object : w:1
  15
-------- ROM-ADDRESS: 0xC20D ---- SIZE       2 ---
+------- ROM-ADDRESS: 0xC223 ---- RAM-ADDRESS: 0x904 ---- SIZE       2 ---
+Name of initialized Object : fuck
+ 03E8
+------- ROM-ADDRESS: 0xC225 ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -1330,7 +1335,7 @@ shiftOutX                 USES _PTT delay shiftOut
 shiftOutY                 USES _PTT delay shiftOut 
 setSPIDataOnes            USES setSPIDataBit 
 main                      USES initializations colIndex w setSPIDataOnes 
-                                setSPIDataBit shiftOutX shiftOutY 
+                                setSPIDataBit shiftOutX shiftOutY delay fuck 
 RTI_ISR                   USES _CRGFLG previousLeftButton _PORTAD0 leftpb 
                                 previousRightButton rghtpb 
 TIM_ISR                   USES _TFLG1 interuptFlag tickCounter gameStarted 
@@ -1363,11 +1368,13 @@ DEPENDENCY TREE
  |  |  +- shiftOut            
  |  |       
  |  +- shiftOutY           
- |     | 
- |     +- delay                (see above)
- |     |  
- |     +- shiftOut             (see above)
- |        
+ |  |  | 
+ |  |  +- delay                (see above)
+ |  |  |  
+ |  |  +- shiftOut             (see above)
+ |  |     
+ |  +- delay                (see above)
+ |     
  +- _Startup            
     | 
     +- Init                
@@ -1388,6 +1395,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 7
-Total size of all blocks to be downloaded: 533
+Number of blocks to be downloaded: 6
+Total size of all blocks to be downloaded: 557
 

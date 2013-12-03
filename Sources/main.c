@@ -264,6 +264,7 @@ void delay(){
 }
 
 int colIndex = 0;
+int fuck=1000;
 	 		  			 		  		
 void main(void) {
   DisableInterrupts;
@@ -283,6 +284,10 @@ void main(void) {
   setSPIDataBit(31 - colIndex, 1); 
   shiftOutY();
   colIndex++;
+  while (fuck-->0) {
+    delay();
+  }
+  fuck = 1000;
   
   //shiftOutY();
   /* END TEST CODE */
