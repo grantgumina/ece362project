@@ -29,17 +29,19 @@ int previousRightButton = 0;    // previous right push button state
 int gameStarted = 0;            // toggle for starting the game                        
 int rticnt = 0;                 // RTICNT (variable)
 int prevpb = 0;                 // previous state of pushbuttons (variable)
+int evolveFlag = 0;             
+int displayBoardFlag = 0;
 int interuptFlag = 0;
+int TICKS_BETWEEN_EVOLUTIONS = 500;
+int ticksSinceLastEvolution = 0;
 
 int h = 27;                     // height of the board
 int w = 21;                     // width of the board
-int n = 0;                      // silly global variable used in evolution delay
-int k = 0;                      // another silly global variable used in delay
-int board[27][21];              // array representing conway's game of life board
-int tempBoard[27][21];          // temperary game board for board evolution
+char board[27][21];              // array representing conway's game of life board
+char tempBoard[27][21];          // temperary game board for board evolution
 int tickCounter = 0;            // timer variable
 char SPIData[4];                // the data we will put on to the registers, LSB first
-int yRegIndex;
+char yRegIndex;
 
 /***********************************************************************
 Initializations
@@ -130,7 +132,7 @@ void game() {
   for (x = 0; x < w; x++) {
     int y;
     for (y = 0; y < h; y++) {
-      board[y][x] = tickCounter;
+      board[y][x] = tickCounter % 2;
     }
   }
 }
@@ -252,20 +254,15 @@ void main(void) {
       gameStarted = 0;
     }
     
-    // display game board
-    
-    // evolve game board
-    //evolve();
-    
-    // delay animation
-    while(n <= 10000) {
-      while(k <= 10000) {
-        
-      }
-      k = 0;
+    if (evolveFlag) {
+      evolveFlag = 0;
+      evolve(); 
     }
     
-    n = 0;
+    if (displayBoardFlag) {
+      displayBoardFlag = 0;
+      displayBoard();  
+    }
     
     _FEED_COP(); /* feeds the watchdog timer */
   } /* loop forever */
@@ -300,7 +297,11 @@ interrupt 15 void TIM_ISR( void)
   tickCounter++;  	
   
   if (gameStarted == 1) {
-    // set display board flag
+    displayBoardFlag = 1;
+    if (ticksSinceLastEvolution >= TICKS_BETWEEN_EVOLUTIONS) {
+      ticksSinceLastEvolution = 0;
+      evolveFlag = 1;  
+    }
   }
 }
 
