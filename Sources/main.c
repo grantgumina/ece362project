@@ -20,7 +20,10 @@ void setSPIDataOnes();
 char inchar(void);
 void outchar(char x);
 
-//  Variable declarations  	   			 		  			 		       
+//  Variable declarations
+// REMOVE, TEST:
+  int fuck, shit;
+// END REMOVE  	   			 		  			 		       
 int tenthsec = 0;               // One-tenth second flag
 int leftpb = 0;                 // left pushbutton flag
 int rghtpb = 0;                 // right pushbutton flag
@@ -73,14 +76,21 @@ void  initializations(void) {
   SCICR2 =  0x0C;         //initialize SCI for program-driven operation
   
   // Initialize the SPI to 6.25 MHz
-  // TODO: Make sure is LSB first
-  SPICR1 = 0b01011000;
-  SPICR2 = 0;
-  SPIBR = 1;
+  SPICR1_LSBFE = 1;   // LSB first
+  SPICR1_SSOE = 0;    // Slave select output disabled
+  SPICR1_CPHA = 0;    // Data sampling occurs at odd clock edges
+  SPICR1_CPOL = 0;    // Active high clock
+  SPICR1_MSTR = 1;    // Set in master mode
+  SPICR1_SPTIE = 0;   // Transmit empty interrupt disabled
+  SPICR1_SPE = 1;     // Enable SPI
+  SPICR1_SPIE = 0;    // SPI interrupts disabled
+  SPICR2 = 0;         // Who knows, go default. Fuck it
+  SPIBR = 0b00000001; // 6.25Mhz
   
   //set up leds for output
   DDRT_DDRT0 = 1;
   DDRT_DDRT1 = 1;
+  DDRT_DDRT7 = 1; // CS pin
 
   //  Initialize Port AD pins 7 and 6 for use as digital inputs
   DDRAD = 0; 		          //program port AD for input mode
@@ -149,11 +159,10 @@ void turnOnRow(int r) {
 }
 
 void turnOnCol(int c) {
-  // iterate through all 21 columns
   int x;
-  for (x = 0; x < w; x++) {
+  for (x = 0; x < h; x++) {
     // turn on this LED
-    board[c][x] = 1;
+    board[x][c] = 1;
   }
 }
 
@@ -185,12 +194,12 @@ void displayBoard() {
     displayColumn(i);
     
     // For testing, arbitrary delay
-    x = 10000;
-    while (x-->0) {
-      y = 10000;
-      while (y-->0){
-      }
-    }
+    //x = 10000;
+    //while (x-->0) {
+    //  y = 10000;
+    //  while (y-->0){
+    //  }
+    //}
     // End arbitrary delay
   }
 }
@@ -230,13 +239,20 @@ void main(void) {
   DisableInterrupts;
 	initializations(); 		  			 		  		
 	EnableInterrupts;
-
+  
+  /* TEST INITIALIZATION */
+  setSPIDataOnes();
+  shiftOutX();
+  shiftOutY();
+  /* END TEST INITIALIZATION */
   for(;;) {
+  /* REAL CODE */
+  /*
     // check to see if user wants to start the game (presses left push button)
     if (leftpb == 1) {
       leftpb = 0;      
       // stop counter 
-      tickCounter = 0;
+      //tickCounter = 0;
       // initialize game if it hasn't been started before...
       if (gameStarted == 0) {
         // make sure flag for starting game is set to 0
@@ -263,7 +279,8 @@ void main(void) {
       displayBoardFlag = 0;
       displayBoard();  
     }
-    
+  */// END REAL CODE
+      
     _FEED_COP(); /* feeds the watchdog timer */
   } /* loop forever */
   /* make sure that you never leave main */
