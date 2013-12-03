@@ -9,7 +9,7 @@ void shiftOutRow(int r);
 void shiftOutCol(int c);
 void turnOnCol(int c);
 void turnOnRow(int r);
-void setDataBit(int bitIndex, int value);
+void setSPIDataBit(int bitIndex, int value);
 void shiftOut();
 void displayBoard();
 void displayColumn(int column);
@@ -38,6 +38,7 @@ int displayBoardFlag = 0;
 int interuptFlag = 0;
 int TICKS_BETWEEN_EVOLUTIONS = 500;
 int ticksSinceLastEvolution = 0;
+void delay();
 
 int h = 27;                     // height of the board
 int w = 21;                     // width of the board
@@ -201,7 +202,7 @@ void displayColumn(int column) {
  * SPI/Shifting Functions 
  * Helper functions for display functions. Interface with SPI.
  */
-void setDataBit(int bitIndex, int value) { 
+void setSPIDataBit(int bitIndex, int value) { 
   int desiredCharIndex = bitIndex / 8;
   int innerIndex = bitIndex % 8;
   char mask = 1 << innerIndex;
@@ -217,34 +218,48 @@ void shiftOut() {
   int i;
   for (i=0; i < 4; i++ ) {
     // read the SPTEF bit, continue if bit is 1
-    while(!SPISR_SPTEF);
+    //while(!SPISR_SPTEF);
     // write data to SPI data register
     SPIDR = SPIData[i];
+    while(!SPISR_SPTEF);
   }
 }
 
 void shiftOutX() {
   PTT_PTT7 = 1; // Left side is X register
+  delay();
   shiftOut();
+  
 }
 
 void shiftOutY() {
   PTT_PTT7 = 0; // Right side is Y register
+  delay();
   shiftOut();
+  
 }
 
 
 void setSPIDataZero() {
   int i;
   for (i=0; i < 32; i++){
-    setDataBit(i, 0);
+    setSPIDataBit(i, 0);
   }
 }
 
 void setSPIDataOnes() {
   int i;
   for (i=0; i < 32; i++){
-    setDataBit(i, 1);
+    setSPIDataBit(i, 1);
+  }
+}
+
+void delay(){
+ int x = 100;
+  while(x-->0){ 
+   int y = 10;
+   while(y-->0) { 
+   } 
   }
 }
 	 		  			 		  		
@@ -254,7 +269,26 @@ void main(void) {
 	EnableInterrupts;
   
   /* TEST CODE */
-  displayColumn(1);
+  
+  setSPIDataZero();
+  setSPIDataBit(31, 0);
+  setSPIDataBit(29, 1);
+  setSPIDataBit(27, 1);
+  setSPIDataBit(25, 1);
+  setSPIDataBit(23, 1);
+  setSPIDataBit(21, 1);
+  setSPIDataBit(19, 1);
+  shiftOutY();
+  setSPIDataBit(17, 1);
+  setSPIDataBit(15, 1);
+  setSPIDataBit(13, 1);
+  setSPIDataBit(11, 1);
+  setSPIDataBit(9, 1);
+  setSPIDataBit(7, 1);
+  setSPIDataBit(5, 1);
+  setSPIDataBit(3, 1);
+  setSPIDataBit(1, 1);
+  shiftOutX();
   
   //shiftOutY();
   /* END TEST CODE */
@@ -345,3 +379,5 @@ void outchar(char ch) {
     while (!(SCISR1 & 0x80));  /* wait for output buffer empty */
     SCIDRL = ch;
 }
+
+
