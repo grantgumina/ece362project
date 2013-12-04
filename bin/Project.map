@@ -25,7 +25,7 @@ _startupData is allocated at 0xC031 and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
   _Range   pZeroOut       0x900     1165
-  _Copy    *toCopyDownBeg 0xC3D7
+  _Copy    *toCopyDownBeg 0xC3D4
 } _startupData;
 
 *********************************************************************************************
@@ -34,8 +34,8 @@ Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
 .init                             49     R     0xC000     0xC030   ROM_C000
 .startData                        10     R     0xC031     0xC03A   ROM_C000
-.text                            916     R     0xC03B     0xC3CE   ROM_C000
-.copy                             13     R     0xC3D7     0xC3E3   ROM_C000
+.text                            913     R     0xC03B     0xC3CB   ROM_C000
+.copy                             13     R     0xC3D4     0xC3E0   ROM_C000
 .stack                           256   R/W      0x800      0x8FF   RAM
 .data                              8   R/W      0x900      0x907   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
@@ -263,11 +263,11 @@ Section Name                    Size  Type     From       To       Segment
 .abs_section_ffe0                  2     R     0xFFE0     0xFFE1   .absSeg222
 .bss                              16   R/W      0x908      0x917   RAM
 .common                         1141   R/W      0x918      0xD8C   RAM
-RUNTIME                            8     R     0xC3CF     0xC3D6   ROM_C000
+RUNTIME                            8     R     0xC3CC     0xC3D3   ROM_C000
 .vectSeg223_vect                   2     R     0xFFFE     0xFFFF   .vectSeg223
 
 Summary of section sizes per section type:
-READ_ONLY (R):         3EA (dec:     1002)
+READ_ONLY (R):         3E7 (dec:      999)
 READ_WRITE (R/W):      58D (dec:     1421)
 NO_INIT (N/I):         104 (dec:      260)
 
@@ -509,18 +509,19 @@ MODULE:                 -- main.c.o --
 - PROCEDURES:
      initializations                           C03B      78     120       1   .text       
      evolve                                    C0B3     111     273       5   .text       
-     resetGame                                 C1C4      5A      90       3   .text       
-     displayBoard                              C21E      18      24       1   .text       
-     displayColumn                             C236      4C      76       1   .text       
-     setSPIDataBit                             C282      42      66       3   .text       
-     shiftOut                                  C2C4      1B      27       2   .text       
-     shiftOutX                                 C2DF       A      10       2   .text       
-     shiftOutY                                 C2E9       A      10       1   .text       
-     setSPIDataOnes                            C2F3      17      23       2   .text       
-     delay                                     C30A      1F      31       2   .text       
-     main                                      C329      60      96       1   .text       
-     RTI_ISR                                   C389      3C      60       1   .text       
-     TIM_ISR                                   C3C5       A      10       1   .text       
+     resetGame                                 C1C4      4C      76       3   .text       
+     turnOffLEDs                               C210       6       6       2   .text       
+     displayBoard                              C216      1A      26       1   .text       
+     displayColumn                             C230      4C      76       1   .text       
+     setSPIDataBit                             C27C      42      66       3   .text       
+     shiftOut                                  C2BE      1B      27       2   .text       
+     shiftOutX                                 C2D9       A      10       3   .text       
+     shiftOutY                                 C2E3       A      10       1   .text       
+     setSPIDataOnes                            C2ED      17      23       3   .text       
+     delay                                     C304      1F      31       2   .text       
+     main                                      C323      63      99       1   .text       
+     RTI_ISR                                   C386      3C      60       1   .text       
+     TIM_ISR                                   C3C2       A      10       1   .text       
 - VARIABLES:
      boardsAreSame                              900       2       2       3   .data       
      TICKS_BETWEEN_EVOLUTIONS                   902       2       2       1   .data       
@@ -536,7 +537,7 @@ MODULE:                 -- main.c.o --
      tickCounter                                916       2       2       2   .bss        
      _Vector_7                                 FFF0       2       2       0   .abs_section_fff0
      _Vector_15                                FFE0       2       2       0   .abs_section_ffe0
-     randy                                      918       2       2       1   .common     
+     randy                                      918       2       2       2   .common     
      board                                      91A     237     567       6   .common     
      tempBoard                                  B51     237     567       3   .common     
      SPIData                                    D88       4       4       4   .common     
@@ -551,7 +552,7 @@ MODULE:                 -- Start12.c.o --
      __SEG_END_SSTACK                           900       0       0       1               
 MODULE:                 -- rtshc12.c.o (ansisi.lib) --
 - PROCEDURES:
-     _BSHL                                     C3CF       8       8       1   RUNTIME     
+     _BSHL                                     C3CC       8       8       1   RUNTIME     
 - VARIABLES:
 
 *********************************************************************************************
@@ -559,7 +560,7 @@ MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
   mc9s12c32.c.o                              260      0      0
-  main.c.o                                  1165    916      4
+  main.c.o                                  1165    913      4
   Start12.c.o                                  0     49      0
   rtshc12.c.o (ansisi.lib)                     0      8      0
   other                                      256     12     13
@@ -568,8 +569,9 @@ MODULE STATISTIC
 SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 SECTION: ".text"
-  initializations evolve resetGame displayBoard displayColumn setSPIDataBit 
-  shiftOut shiftOutX shiftOutY setSPIDataOnes delay main RTI_ISR TIM_ISR 
+  initializations evolve resetGame turnOffLEDs displayBoard displayColumn 
+  setSPIDataBit shiftOut shiftOutX shiftOutY setSPIDataOnes delay main RTI_ISR 
+  TIM_ISR 
 SECTION: ".data"
   boardsAreSame TICKS_BETWEEN_EVOLUTIONS h w 
 SECTION: ".bss"
@@ -1265,7 +1267,7 @@ OBJECT LIST SORTED BY ADDRESS
      interuptFlag                               912       2       2       2   .bss        
      ticksSinceLastEvolution                    914       2       2       3   .bss        
      tickCounter                                916       2       2       2   .bss        
-     randy                                      918       2       2       1   .common     
+     randy                                      918       2       2       2   .common     
      board                                      91A     237     567       6   .common     
      tempBoard                                  B51     237     567       3   .common     
      SPIData                                    D88       4       4       4   .common     
@@ -1274,19 +1276,20 @@ OBJECT LIST SORTED BY ADDRESS
      _Startup                                  C029       8       8       0   .init       
      initializations                           C03B      78     120       1   .text       
      evolve                                    C0B3     111     273       5   .text       
-     resetGame                                 C1C4      5A      90       3   .text       
-     displayBoard                              C21E      18      24       1   .text       
-     displayColumn                             C236      4C      76       1   .text       
-     setSPIDataBit                             C282      42      66       3   .text       
-     shiftOut                                  C2C4      1B      27       2   .text       
-     shiftOutX                                 C2DF       A      10       2   .text       
-     shiftOutY                                 C2E9       A      10       1   .text       
-     setSPIDataOnes                            C2F3      17      23       2   .text       
-     delay                                     C30A      1F      31       2   .text       
-     main                                      C329      60      96       1   .text       
-     RTI_ISR                                   C389      3C      60       1   .text       
-     TIM_ISR                                   C3C5       A      10       1   .text       
-     _BSHL                                     C3CF       8       8       1   RUNTIME     
+     resetGame                                 C1C4      4C      76       3   .text       
+     turnOffLEDs                               C210       6       6       2   .text       
+     displayBoard                              C216      1A      26       1   .text       
+     displayColumn                             C230      4C      76       1   .text       
+     setSPIDataBit                             C27C      42      66       3   .text       
+     shiftOut                                  C2BE      1B      27       2   .text       
+     shiftOutX                                 C2D9       A      10       3   .text       
+     shiftOutY                                 C2E3       A      10       1   .text       
+     setSPIDataOnes                            C2ED      17      23       3   .text       
+     delay                                     C304      1F      31       2   .text       
+     main                                      C323      63      99       1   .text       
+     RTI_ISR                                   C386      3C      60       1   .text       
+     TIM_ISR                                   C3C2       A      10       1   .text       
+     _BSHL                                     C3CC       8       8       1   RUNTIME     
      _Vector_15                                FFE0       2       2       0   .abs_section_ffe0
      _Vector_7                                 FFF0       2       2       0   .abs_section_fff0
 
@@ -1312,31 +1315,31 @@ rtshc12.c.o (ansisi.lib):
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xC3D7 ---- SIZE       4 ---
+------- ROM-ADDRESS: 0xC3D4 ---- SIZE       4 ---
 Filling bytes inserted
  00070901
-------- ROM-ADDRESS: 0xC3DB ---- RAM-ADDRESS: 0x901 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC3D8 ---- RAM-ADDRESS: 0x901 ---- SIZE       1 ---
 Name of initialized Object : boardsAreSame:1
  01
-------- ROM-ADDRESS: 0xC3DC ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC3D9 ---- SIZE       1 ---
 Filling bytes inserted
  00
-------- ROM-ADDRESS: 0xC3DD ---- RAM-ADDRESS: 0x903 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC3DA ---- RAM-ADDRESS: 0x903 ---- SIZE       1 ---
 Name of initialized Object : TICKS_BETWEEN_EVOLUTIONS:1
  64
-------- ROM-ADDRESS: 0xC3DE ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC3DB ---- SIZE       1 ---
 Filling bytes inserted
  00
-------- ROM-ADDRESS: 0xC3DF ---- RAM-ADDRESS: 0x905 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC3DC ---- RAM-ADDRESS: 0x905 ---- SIZE       1 ---
 Name of initialized Object : h:1
  1B
-------- ROM-ADDRESS: 0xC3E0 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC3DD ---- SIZE       1 ---
 Filling bytes inserted
  00
-------- ROM-ADDRESS: 0xC3E1 ---- RAM-ADDRESS: 0x907 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC3DE ---- RAM-ADDRESS: 0x907 ---- SIZE       1 ---
 Name of initialized Object : w:1
  15
-------- ROM-ADDRESS: 0xC3E2 ---- SIZE       2 ---
+------- ROM-ADDRESS: 0xC3DF ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -1351,7 +1354,8 @@ initializations           USES _CLKSEL _PLLCTL _SYNR _REFDV _CRGFLG _COPCTL
                                 _CRGINT _ATDCTL23 _ATDCTL45 
 evolve                    USES evolve h w board tempBoard boardsAreSame 
 resetGame                 USES _ATDCTL45 _ATDSTAT0 _ATDDR0 randy board h w 
-displayBoard              USES displayColumn w 
+turnOffLEDs               USES setSPIDataOnes shiftOutX 
+displayBoard              USES displayColumn w turnOffLEDs 
 displayColumn             USES setSPIDataOnes shiftOutX yRegIndex board 
                                 setSPIDataBit h shiftOutY 
 setSPIDataBit             USES _BSHL SPIData 
@@ -1359,9 +1363,10 @@ shiftOut                  USES SPIData _SPIDR _SPISR
 shiftOutX                 USES _PTT delay shiftOut 
 shiftOutY                 USES _PTT delay shiftOut 
 setSPIDataOnes            USES setSPIDataBit 
-main                      USES initializations resetGame _TC7 displayBoard 
-                                interuptFlag tickCounter ticksSinceLastEvolution 
-                                TICKS_BETWEEN_EVOLUTIONS evolveFlag evolve boardsAreSame rghtpb 
+main                      USES initializations turnOffLEDs resetGame _TC7 
+                                displayBoard interuptFlag tickCounter 
+                                ticksSinceLastEvolution TICKS_BETWEEN_EVOLUTIONS evolveFlag evolve 
+                                boardsAreSame rghtpb 
 RTI_ISR                   USES _CRGFLG previousLeftButton _PORTAD0 leftpb 
                                 previousRightButton rghtpb 
 TIM_ISR                   USES _TFLG1 interuptFlag 
@@ -1377,32 +1382,40 @@ DEPENDENCY TREE
  |  | 
  |  +- initializations     
  |  |    
+ |  +- turnOffLEDs         
+ |  |  | 
+ |  |  +- setSPIDataOnes      
+ |  |  |  | 
+ |  |  |  +- setSPIDataBit       
+ |  |  |     | 
+ |  |  |     +- _BSHL               
+ |  |  |          
+ |  |  +- shiftOutX           
+ |  |     | 
+ |  |     +- delay               
+ |  |     |    
+ |  |     +- shiftOut            
+ |  |          
  |  +- resetGame           
  |  |    
  |  +- displayBoard        
  |  |  | 
  |  |  +- displayColumn       
- |  |     | 
- |  |     +- setSPIDataOnes      
- |  |     |  | 
- |  |     |  +- setSPIDataBit       
- |  |     |     | 
- |  |     |     +- _BSHL               
- |  |     |          
- |  |     +- shiftOutX           
- |  |     |  | 
- |  |     |  +- delay               
- |  |     |  |    
- |  |     |  +- shiftOut            
- |  |     |       
- |  |     +- setSPIDataBit        (see above)
- |  |     |  
- |  |     +- shiftOutY           
- |  |        | 
- |  |        +- delay                (see above)
- |  |        |  
- |  |        +- shiftOut             (see above)
- |  |           
+ |  |  |  | 
+ |  |  |  +- setSPIDataOnes       (see above)
+ |  |  |  |  
+ |  |  |  +- shiftOutX            (see above)
+ |  |  |  |  
+ |  |  |  +- setSPIDataBit        (see above)
+ |  |  |  |  
+ |  |  |  +- shiftOutY           
+ |  |  |     | 
+ |  |  |     +- delay                (see above)
+ |  |  |     |  
+ |  |  |     +- shiftOut             (see above)
+ |  |  |        
+ |  |  +- turnOffLEDs          (see above)
+ |  |     
  |  +- evolve              
  |       
  +- _Startup            
@@ -1425,6 +1438,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 6
-Total size of all blocks to be downloaded: 1002
+Number of blocks to be downloaded: 7
+Total size of all blocks to be downloaded: 999
 

@@ -8,6 +8,7 @@ void evolve();
 void shiftOutRow(int r);
 void shiftOutCol(int c);
 void turnOnCol(int c);
+void turnOffLEDs();
 void turnOnRow(int r);
 void setSPIDataBit(int bitIndex, int value);
 void shiftOut();
@@ -160,7 +161,6 @@ void resetGame() {
       while (ATDSTAT0_SCF == 0);
       randy = ATDDR0H;
       board[y][x] = randy % 2;
-      //board[y][x] = (x*y*y/x) % 2;
     }
   }
 }
@@ -183,13 +183,20 @@ void turnOnCol(int c) {
     // turn on this LED
     board[y][c] = 1;
   }
-} 
+}
+
+void turnOffLEDs() {
+  setSPIDataOnes();
+  shiftOutX(); 
+}
 
 void displayBoard() {
   int i;
   for (i=0; i < w; i++) {
     displayColumn(i);
   };
+  // Once we are done, kill all the LEDs
+  turnOffLEDs();
 }
 
 void displayColumn(int column) {
@@ -278,6 +285,7 @@ void main(void) {
 	initializations(); 		  			 		  		
 	EnableInterrupts;
   
+  turnOffLEDs();
   // reset game on startup
   resetGame();
   
