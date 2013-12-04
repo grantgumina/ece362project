@@ -3,7 +3,7 @@
 #include <mc9s12c32.h>
 
 // All funtions after main should be initialized here
-void game();
+void resetGame();
 void evolve();
 void shiftOutRow(int r);
 void shiftOutCol(int c);
@@ -36,7 +36,7 @@ int prevpb = 0;                 // previous state of pushbuttons (variable)
 int evolveFlag = 0;             
 int displayBoardFlag = 0;
 int interuptFlag = 0;
-int TICKS_BETWEEN_EVOLUTIONS = 500;
+int TICKS_BETWEEN_EVOLUTIONS = 1;
 int ticksSinceLastEvolution = 0;
 void delay();
 
@@ -139,12 +139,12 @@ void evolve() {
   }
 }
 
-void game() {
+void resetGame() {
   int x;
   for (x = 0; x < w; x++) {
     int y;
     for (y = 0; y < h; y++) {
-      board[y][x] = tickCounter % 2;
+      board[y][x] = y % 2;
     }
   }
 }
@@ -162,38 +162,31 @@ void turnOnRow(int r) {
 }
 
 void turnOnCol(int c) {
-  int x;
-  for (x = 0; x < h; x++) {
+  int y;
+  for (y = 0; y < h; y++) {
     // turn on this LED
-    board[x][c] = 1;
+    board[y][c] = 1;
   }
-}
+} 
+
 void displayBoard() {
-  int i,x,y;
+  int i;
   for (i=0; i < w; i++) {
     displayColumn(i);
-    
-    // For testing, arbitrary delay
-    //x = 10000;
-    //while (x-->0) {
-    //  y = 10000;
-    //  while (y-->0){
-    //  }
-    //}
-    // End arbitrary delay
-  }
+  };
 }
 
 void displayColumn(int column) {
   /* Set up X register */
   setSPIDataOnes();
-  setDataBit(31 - column, 0);
+  setSPIDataBit(31 - column, 0);
   shiftOutX();
   
   /* Set up Y register */
   // yRegIndex had to be declared globally
+  
   for (yRegIndex=0; yRegIndex < h; yRegIndex++) {
-    setDataBit(31 - yRegIndex, board[column][yRegIndex]);   
+    setSPIDataBit(31 - yRegIndex, board[yRegIndex][column]);   
   }
   shiftOutY();
 }             
@@ -217,10 +210,9 @@ void setSPIDataBit(int bitIndex, int value) {
 void shiftOut() {
   int i;
   for (i=0; i < 4; i++ ) {
-    // read the SPTEF bit, continue if bit is 1
-    //while(!SPISR_SPTEF);
     // write data to SPI data register
     SPIDR = SPIData[i];
+    // read the SPTEF bit, continue if bit is 1
     while(!SPISR_SPTEF);
   }
 }
@@ -229,7 +221,6 @@ void shiftOutX() {
   PTT_PTT7 = 1; // Left side is X register
   delay();
   shiftOut();
-  
 }
 
 void shiftOutY() {
@@ -238,7 +229,6 @@ void shiftOutY() {
   shiftOut();
   
 }
-
 
 void setSPIDataZero() {
   int i;
@@ -255,78 +245,52 @@ void setSPIDataOnes() {
 }
 
 void delay(){
- int x = 100;
+ int x = 1000;
   while(x-->0){ 
    int y = 10;
    while(y-->0) { 
    } 
   }
 }
-
-int colIndex = 0;
-int fuck=1000;
 	 		  			 		  		
 void main(void) {
   DisableInterrupts;
 	initializations(); 		  			 		  		
 	EnableInterrupts;
   
+  // reset game on startup
+  //resetGame();
+  setSPIDataZero();  board[5][10] = 1;
+  board[5][9] = 1;
+  board[5][8] = 1;
+  displayBoard();
+  
   for(;;) {
-  
-  /* TEST CODE */
-  
-  if (colIndex == w) {
-    colIndex = 0;
-  }
-  setSPIDataOnes();  
-  setSPIDataBit(31 - colIndex, 0);
-  shiftOutX();
-  setSPIDataBit(31 - colIndex, 1); 
-  shiftOutY();
-  colIndex++;
-  while (fuck-->0) {
-    delay();
-  }
-  fuck = 1000;
-  
-  //shiftOutY();
-  /* END TEST CODE */
-  
-  /* REAL CODE */
-  /*
-    // check to see if user wants to start the game (presses left push button)
-    if (leftpb == 1) {
-      leftpb = 0;      
-      // stop counter 
-      //tickCounter = 0;
-      // initialize game if it hasn't been started before...
-      if (gameStarted == 0) {
-        // make sure flag for starting game is set to 0
-        gameStarted = 1;
-        //outchar('s'); // DEBUG
-        game();
-      }
-    }
-    
+    /* TEST CODE */
+    evolve();
+    displayBoard();
+    /*
+    turnOnCol(1);
+    turnOnCol(2);
+    turnOnCol(3);
+    displayColumn(1);
+    displayColumn(2);
+    displayColumn(3);
+    */
     // check to see if the user would like to reset the game (presses right push button)
+    /*
     if (rghtpb == 1) {
       rghtpb = 0;
-      // reset the game
-      //outchar('r'); // DEBUG
-      gameStarted = 0;
+      resetGame();
     }
     
     if (evolveFlag) {
       evolveFlag = 0;
       evolve(); 
     }
-    
-    if (displayBoardFlag) {
-      displayBoardFlag = 0;
-      displayBoard();  
-    }
-  */// END REAL CODE
-      
+
+    displayBoard();  
+    */
     _FEED_COP(); /* feeds the watchdog timer */
   } /* loop forever */
   /* make sure that you never leave main */
@@ -359,12 +323,9 @@ interrupt 15 void TIM_ISR( void)
   interuptFlag = 1;
   tickCounter++;  	
   
-  if (gameStarted == 1) {
-    displayBoardFlag = 1;
-    if (ticksSinceLastEvolution >= TICKS_BETWEEN_EVOLUTIONS) {
-      ticksSinceLastEvolution = 0;
-      evolveFlag = 1;  
-    }
+  if (ticksSinceLastEvolution >= TICKS_BETWEEN_EVOLUTIONS) {
+    ticksSinceLastEvolution = 0;
+    evolveFlag = 1;  
   }
 }
 
