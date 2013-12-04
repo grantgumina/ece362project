@@ -21,10 +21,7 @@ void setSPIDataOnes();
 char inchar(void);
 void outchar(char x);
 
-//  Variable declarations
-// REMOVE, TEST:
-  int fuck, shit;
-// END REMOVE  	   			 		  			 		       
+//  Variable declarations 	   			 		  			 		       
 int tenthsec = 0;               // One-tenth second flag
 int leftpb = 0;                 // left pushbutton flag
 int rghtpb = 0;                 // right pushbutton flag
@@ -36,7 +33,7 @@ int prevpb = 0;                 // previous state of pushbuttons (variable)
 int evolveFlag = 0;             
 int displayBoardFlag = 0;
 int interuptFlag = 0;
-int TICKS_BETWEEN_EVOLUTIONS = 1;
+int TICKS_BETWEEN_EVOLUTIONS = 100;
 int ticksSinceLastEvolution = 0;
 void delay();
 
@@ -177,11 +174,10 @@ void displayBoard() {
 }
 
 void displayColumn(int column) {
-  /* Set up X register */
+  /* Turn off all X register */
   setSPIDataOnes();
-  setSPIDataBit(31 - column, 0);
   shiftOutX();
-  
+
   /* Set up Y register */
   // yRegIndex had to be declared globally
   
@@ -189,6 +185,11 @@ void displayColumn(int column) {
     setSPIDataBit(31 - yRegIndex, board[yRegIndex][column]);   
   }
   shiftOutY();
+  
+  /* Set up X register */
+  setSPIDataOnes();
+  setSPIDataBit(31 - column, 0);
+  shiftOutX();
 }             
 
 /* 
@@ -245,14 +246,14 @@ void setSPIDataOnes() {
 }
 
 void delay(){
- int x = 1000;
+ int x = 10;
   while(x-->0){ 
    int y = 10;
    while(y-->0) { 
    } 
   }
 }
-	 		  			 		  		
+ 		  			 		  		
 void main(void) {
   DisableInterrupts;
 	initializations(); 		  			 		  		
@@ -263,34 +264,33 @@ void main(void) {
   setSPIDataZero();  board[5][10] = 1;
   board[5][9] = 1;
   board[5][8] = 1;
-  displayBoard();
   
   for(;;) {
-    /* TEST CODE */
-    evolve();
     displayBoard();
-    /*
-    turnOnCol(1);
-    turnOnCol(2);
-    turnOnCol(3);
-    displayColumn(1);
-    displayColumn(2);
-    displayColumn(3);
-    */
+    
+    
+    if (interuptFlag) {
+       tickCounter++;
+       ticksSinceLastEvolution++;  	
+  
+       if (ticksSinceLastEvolution >= TICKS_BETWEEN_EVOLUTIONS) {
+         ticksSinceLastEvolution = 0;
+         evolveFlag = 1;  
+       }  
+    }
+    
+    if (evolveFlag) {
+      evolveFlag = 0;
+      evolve();
+    }
+  
     // check to see if the user would like to reset the game (presses right push button)
-    /*
     if (rghtpb == 1) {
       rghtpb = 0;
       resetGame();
     }
     
-    if (evolveFlag) {
-      evolveFlag = 0;
-      evolve(); 
-    }
-
-    displayBoard();  
-    */
+  
     _FEED_COP(); /* feeds the watchdog timer */
   } /* loop forever */
   /* make sure that you never leave main */
@@ -321,12 +321,6 @@ interrupt 15 void TIM_ISR( void)
   // set TFLG1 bit
   TFLG1 = TFLG1 | 0x80; 
   interuptFlag = 1;
-  tickCounter++;  	
-  
-  if (ticksSinceLastEvolution >= TICKS_BETWEEN_EVOLUTIONS) {
-    ticksSinceLastEvolution = 0;
-    evolveFlag = 1;  
-  }
 }
 
 char  inchar(void) {
