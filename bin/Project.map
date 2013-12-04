@@ -24,8 +24,8 @@ Entry point: 0xC029 (_Startup)
 _startupData is allocated at 0xC031 and uses 6 Bytes
 extern struct _tagStartup {
   unsigned nofZeroOut     1
-  _Range   pZeroOut       0x900     1161
-  _Copy    *toCopyDownBeg 0xC3A6
+  _Range   pZeroOut       0x900     1165
+  _Copy    *toCopyDownBeg 0xC3D7
 } _startupData;
 
 *********************************************************************************************
@@ -34,10 +34,10 @@ Section Name                    Size  Type     From       To       Segment
 ---------------------------------------------------------------------------------------------
 .init                             49     R     0xC000     0xC030   ROM_C000
 .startData                        10     R     0xC031     0xC03A   ROM_C000
-.text                            867     R     0xC03B     0xC39D   ROM_C000
-.copy                             11     R     0xC3A6     0xC3B0   ROM_C000
+.text                            916     R     0xC03B     0xC3CE   ROM_C000
+.copy                             13     R     0xC3D7     0xC3E3   ROM_C000
 .stack                           256   R/W      0x800      0x8FF   RAM
-.data                              6   R/W      0x900      0x905   RAM
+.data                              8   R/W      0x900      0x907   RAM
 .abs_section_8                     1   N/I        0x8        0x8   .absSeg0
 .abs_section_9                     1   N/I        0x9        0x9   .absSeg1
 .abs_section_a                     1   N/I        0xA        0xA   .absSeg2
@@ -261,14 +261,14 @@ Section Name                    Size  Type     From       To       Segment
 .abs_section_17e                   2   N/I      0x17E      0x17F   .absSeg220
 .abs_section_fff0                  2     R     0xFFF0     0xFFF1   .absSeg221
 .abs_section_ffe0                  2     R     0xFFE0     0xFFE1   .absSeg222
-.bss                              16   R/W      0x906      0x915   RAM
-.common                         1139   R/W      0x916      0xD88   RAM
-RUNTIME                            8     R     0xC39E     0xC3A5   ROM_C000
+.bss                              16   R/W      0x908      0x917   RAM
+.common                         1141   R/W      0x918      0xD8C   RAM
+RUNTIME                            8     R     0xC3CF     0xC3D6   ROM_C000
 .vectSeg223_vect                   2     R     0xFFFE     0xFFFF   .vectSeg223
 
 Summary of section sizes per section type:
-READ_ONLY (R):         3B7 (dec:      951)
-READ_WRITE (R/W):      589 (dec:     1417)
+READ_ONLY (R):         3EA (dec:     1002)
+READ_WRITE (R/W):      58D (dec:     1421)
 NO_INIT (N/I):         104 (dec:      260)
 
 *********************************************************************************************
@@ -335,7 +335,7 @@ MODULE:                 -- mc9s12c32.c.o --
      _TFLG2                                      4F       1       1       0   .abs_section_4f
      _PACTL                                      60       1       1       0   .abs_section_60
      _PAFLG                                      61       1       1       0   .abs_section_61
-     _ATDSTAT0                                   86       1       1       0   .abs_section_86
+     _ATDSTAT0                                   86       1       1       1   .abs_section_86
      _ATDTEST1                                   89       1       1       0   .abs_section_89
      _ATDSTAT1                                   8B       1       1       0   .abs_section_8b
      _ATDDIEN                                    8D       1       1       1   .abs_section_8d
@@ -481,11 +481,11 @@ MODULE:                 -- mc9s12c32.c.o --
      _TC4                                        58       2       2       0   .abs_section_58
      _TC5                                        5A       2       2       0   .abs_section_5a
      _TC6                                        5C       2       2       0   .abs_section_5c
-     _TC7                                        5E       2       2       1   .abs_section_5e
+     _TC7                                        5E       2       2       2   .abs_section_5e
      _PACNT                                      62       2       2       0   .abs_section_62
-     _ATDCTL23                                   82       2       2       0   .abs_section_82
-     _ATDCTL45                                   84       2       2       0   .abs_section_84
-     _ATDDR0                                     90       2       2       0   .abs_section_90
+     _ATDCTL23                                   82       2       2       2   .abs_section_82
+     _ATDCTL45                                   84       2       2       2   .abs_section_84
+     _ATDDR0                                     90       2       2       1   .abs_section_90
      _ATDDR1                                     92       2       2       0   .abs_section_92
      _ATDDR2                                     94       2       2       0   .abs_section_94
      _ATDDR3                                     96       2       2       0   .abs_section_96
@@ -507,39 +507,40 @@ MODULE:                 -- mc9s12c32.c.o --
      _CANTXTSR                                  17E       2       2       0   .abs_section_17e
 MODULE:                 -- main.c.o --
 - PROCEDURES:
-     initializations                           C03B      6E     110       1   .text       
-     evolve                                    C0A9      F7     247       4   .text       
-     resetGame                                 C1A0      3E      62       1   .text       
-     displayBoard                              C1DE      18      24       1   .text       
-     displayColumn                             C1F6      4C      76       1   .text       
-     setSPIDataBit                             C242      42      66       4   .text       
-     shiftOut                                  C284      1B      27       2   .text       
-     shiftOutX                                 C29F       A      10       2   .text       
-     shiftOutY                                 C2A9       A      10       1   .text       
-     setSPIDataZero                            C2B3      15      21       1   .text       
-     setSPIDataOnes                            C2C8      17      23       2   .text       
-     delay                                     C2DF      1F      31       2   .text       
-     main                                      C2FE      5A      90       1   .text       
-     RTI_ISR                                   C358      3C      60       1   .text       
-     TIM_ISR                                   C394       A      10       1   .text       
+     initializations                           C03B      78     120       1   .text       
+     evolve                                    C0B3     111     273       5   .text       
+     resetGame                                 C1C4      5A      90       3   .text       
+     displayBoard                              C21E      18      24       1   .text       
+     displayColumn                             C236      4C      76       1   .text       
+     setSPIDataBit                             C282      42      66       3   .text       
+     shiftOut                                  C2C4      1B      27       2   .text       
+     shiftOutX                                 C2DF       A      10       2   .text       
+     shiftOutY                                 C2E9       A      10       1   .text       
+     setSPIDataOnes                            C2F3      17      23       2   .text       
+     delay                                     C30A      1F      31       2   .text       
+     main                                      C329      60      96       1   .text       
+     RTI_ISR                                   C389      3C      60       1   .text       
+     TIM_ISR                                   C3C5       A      10       1   .text       
 - VARIABLES:
-     TICKS_BETWEEN_EVOLUTIONS                   900       2       2       1   .data       
-     h                                          902       2       2       6   .data       
-     w                                          904       2       2       6   .data       
-     leftpb                                     906       2       2       1   .bss        
-     rghtpb                                     908       2       2       3   .bss        
-     previousLeftButton                         90A       2       2       2   .bss        
-     previousRightButton                        90C       2       2       2   .bss        
-     evolveFlag                                 90E       2       2       3   .bss        
-     interuptFlag                               910       2       2       2   .bss        
-     ticksSinceLastEvolution                    912       2       2       3   .bss        
-     tickCounter                                914       2       2       2   .bss        
+     boardsAreSame                              900       2       2       3   .data       
+     TICKS_BETWEEN_EVOLUTIONS                   902       2       2       1   .data       
+     h                                          904       2       2       6   .data       
+     w                                          906       2       2       6   .data       
+     leftpb                                     908       2       2       1   .bss        
+     rghtpb                                     90A       2       2       3   .bss        
+     previousLeftButton                         90C       2       2       2   .bss        
+     previousRightButton                        90E       2       2       2   .bss        
+     evolveFlag                                 910       2       2       3   .bss        
+     interuptFlag                               912       2       2       2   .bss        
+     ticksSinceLastEvolution                    914       2       2       3   .bss        
+     tickCounter                                916       2       2       2   .bss        
      _Vector_7                                 FFF0       2       2       0   .abs_section_fff0
      _Vector_15                                FFE0       2       2       0   .abs_section_ffe0
-     board                                      916     237     567       7   .common     
-     tempBoard                                  B4D     237     567       2   .common     
-     SPIData                                    D84       4       4       4   .common     
-     yRegIndex                                  D88       1       1       3   .common     
+     randy                                      918       2       2       1   .common     
+     board                                      91A     237     567       6   .common     
+     tempBoard                                  B51     237     567       3   .common     
+     SPIData                                    D88       4       4       4   .common     
+     yRegIndex                                  D8C       1       1       3   .common     
 MODULE:                 -- Start12.c.o --
 - PROCEDURES:
      Init                                      C000      29      41       1   .init       
@@ -550,7 +551,7 @@ MODULE:                 -- Start12.c.o --
      __SEG_END_SSTACK                           900       0       0       1               
 MODULE:                 -- rtshc12.c.o (ansisi.lib) --
 - PROCEDURES:
-     _BSHL                                     C39E       8       8       1   RUNTIME     
+     _BSHL                                     C3CF       8       8       1   RUNTIME     
 - VARIABLES:
 
 *********************************************************************************************
@@ -558,20 +559,19 @@ MODULE STATISTIC
   Name                                      Data   Code  Const
 ---------------------------------------------------------------------------------------------
   mc9s12c32.c.o                              260      0      0
-  main.c.o                                  1161    867      4
+  main.c.o                                  1165    916      4
   Start12.c.o                                  0     49      0
   rtshc12.c.o (ansisi.lib)                     0      8      0
-  other                                      256     12     11
+  other                                      256     12     13
 
 *********************************************************************************************
 SECTION USE IN OBJECT-ALLOCATION SECTION
 ---------------------------------------------------------------------------------------------
 SECTION: ".text"
   initializations evolve resetGame displayBoard displayColumn setSPIDataBit 
-  shiftOut shiftOutX shiftOutY setSPIDataZero setSPIDataOnes delay main RTI_ISR 
-  TIM_ISR 
+  shiftOut shiftOutX shiftOutY setSPIDataOnes delay main RTI_ISR TIM_ISR 
 SECTION: ".data"
-  TICKS_BETWEEN_EVOLUTIONS h w 
+  boardsAreSame TICKS_BETWEEN_EVOLUTIONS h w 
 SECTION: ".bss"
   leftpb rghtpb previousLeftButton previousRightButton evolveFlag interuptFlag 
   ticksSinceLastEvolution tickCounter 
@@ -1024,7 +1024,7 @@ SECTION: ".abs_section_fff0"
 SECTION: ".abs_section_ffe0"
   _Vector_15 
 SECTION: ".common"
-  board tempBoard SPIData yRegIndex 
+  randy board tempBoard SPIData yRegIndex 
 SECTION: "RUNTIME"
   _BSHL 
 
@@ -1096,18 +1096,18 @@ OBJECT LIST SORTED BY ADDRESS
      _TC4                                        58       2       2       0   .abs_section_58
      _TC5                                        5A       2       2       0   .abs_section_5a
      _TC6                                        5C       2       2       0   .abs_section_5c
-     _TC7                                        5E       2       2       1   .abs_section_5e
+     _TC7                                        5E       2       2       2   .abs_section_5e
      _PACTL                                      60       1       1       0   .abs_section_60
      _PAFLG                                      61       1       1       0   .abs_section_61
      _PACNT                                      62       2       2       0   .abs_section_62
-     _ATDCTL23                                   82       2       2       0   .abs_section_82
-     _ATDCTL45                                   84       2       2       0   .abs_section_84
-     _ATDSTAT0                                   86       1       1       0   .abs_section_86
+     _ATDCTL23                                   82       2       2       2   .abs_section_82
+     _ATDCTL45                                   84       2       2       2   .abs_section_84
+     _ATDSTAT0                                   86       1       1       1   .abs_section_86
      _ATDTEST1                                   89       1       1       0   .abs_section_89
      _ATDSTAT1                                   8B       1       1       0   .abs_section_8b
      _ATDDIEN                                    8D       1       1       1   .abs_section_8d
      _PORTAD0                                    8F       1       1       4   .abs_section_8f
-     _ATDDR0                                     90       2       2       0   .abs_section_90
+     _ATDDR0                                     90       2       2       1   .abs_section_90
      _ATDDR1                                     92       2       2       0   .abs_section_92
      _ATDDR2                                     94       2       2       0   .abs_section_94
      _ATDDR3                                     96       2       2       0   .abs_section_96
@@ -1253,39 +1253,40 @@ OBJECT LIST SORTED BY ADDRESS
      _RDRAD                                     273       1       1       0   .abs_section_273
      _PERAD                                     274       1       1       0   .abs_section_274
      _PPSAD                                     275       1       1       0   .abs_section_275
-     TICKS_BETWEEN_EVOLUTIONS                   900       2       2       1   .data       
-     h                                          902       2       2       6   .data       
-     w                                          904       2       2       6   .data       
-     leftpb                                     906       2       2       1   .bss        
-     rghtpb                                     908       2       2       3   .bss        
-     previousLeftButton                         90A       2       2       2   .bss        
-     previousRightButton                        90C       2       2       2   .bss        
-     evolveFlag                                 90E       2       2       3   .bss        
-     interuptFlag                               910       2       2       2   .bss        
-     ticksSinceLastEvolution                    912       2       2       3   .bss        
-     tickCounter                                914       2       2       2   .bss        
-     board                                      916     237     567       7   .common     
-     tempBoard                                  B4D     237     567       2   .common     
-     SPIData                                    D84       4       4       4   .common     
-     yRegIndex                                  D88       1       1       3   .common     
+     boardsAreSame                              900       2       2       3   .data       
+     TICKS_BETWEEN_EVOLUTIONS                   902       2       2       1   .data       
+     h                                          904       2       2       6   .data       
+     w                                          906       2       2       6   .data       
+     leftpb                                     908       2       2       1   .bss        
+     rghtpb                                     90A       2       2       3   .bss        
+     previousLeftButton                         90C       2       2       2   .bss        
+     previousRightButton                        90E       2       2       2   .bss        
+     evolveFlag                                 910       2       2       3   .bss        
+     interuptFlag                               912       2       2       2   .bss        
+     ticksSinceLastEvolution                    914       2       2       3   .bss        
+     tickCounter                                916       2       2       2   .bss        
+     randy                                      918       2       2       1   .common     
+     board                                      91A     237     567       6   .common     
+     tempBoard                                  B51     237     567       3   .common     
+     SPIData                                    D88       4       4       4   .common     
+     yRegIndex                                  D8C       1       1       3   .common     
      Init                                      C000      29      41       1   .init       
      _Startup                                  C029       8       8       0   .init       
-     initializations                           C03B      6E     110       1   .text       
-     evolve                                    C0A9      F7     247       4   .text       
-     resetGame                                 C1A0      3E      62       1   .text       
-     displayBoard                              C1DE      18      24       1   .text       
-     displayColumn                             C1F6      4C      76       1   .text       
-     setSPIDataBit                             C242      42      66       4   .text       
-     shiftOut                                  C284      1B      27       2   .text       
-     shiftOutX                                 C29F       A      10       2   .text       
-     shiftOutY                                 C2A9       A      10       1   .text       
-     setSPIDataZero                            C2B3      15      21       1   .text       
-     setSPIDataOnes                            C2C8      17      23       2   .text       
-     delay                                     C2DF      1F      31       2   .text       
-     main                                      C2FE      5A      90       1   .text       
-     RTI_ISR                                   C358      3C      60       1   .text       
-     TIM_ISR                                   C394       A      10       1   .text       
-     _BSHL                                     C39E       8       8       1   RUNTIME     
+     initializations                           C03B      78     120       1   .text       
+     evolve                                    C0B3     111     273       5   .text       
+     resetGame                                 C1C4      5A      90       3   .text       
+     displayBoard                              C21E      18      24       1   .text       
+     displayColumn                             C236      4C      76       1   .text       
+     setSPIDataBit                             C282      42      66       3   .text       
+     shiftOut                                  C2C4      1B      27       2   .text       
+     shiftOutX                                 C2DF       A      10       2   .text       
+     shiftOutY                                 C2E9       A      10       1   .text       
+     setSPIDataOnes                            C2F3      17      23       2   .text       
+     delay                                     C30A      1F      31       2   .text       
+     main                                      C329      60      96       1   .text       
+     RTI_ISR                                   C389      3C      60       1   .text       
+     TIM_ISR                                   C3C5       A      10       1   .text       
+     _BSHL                                     C3CF       8       8       1   RUNTIME     
      _Vector_15                                FFE0       2       2       0   .abs_section_ffe0
      _Vector_7                                 FFF0       2       2       0   .abs_section_fff0
 
@@ -1294,7 +1295,7 @@ UNUSED-OBJECTS SECTION
 ---------------------------------------------------------------------------------------------
 NOT USED PROCEDURES
 main.c.o:
-  turnOnRow turnOnCol inchar outchar 
+  turnOnRow turnOnCol setSPIDataZero inchar outchar 
 rtshc12.c.o (ansisi.lib):
   _BSHRS _BSHRU _BDIVMODU _BDIVMODS _ISHL _ISHRU _ISHRS _LSHL _LSHRU _LSHRS 
   _LADD _LSUB _LAND _LOR _LXOR _LCMP _LCMP_P _LCMP_PP _LNEG _LCOM _LINC _LDEC 
@@ -1311,25 +1312,31 @@ rtshc12.c.o (ansisi.lib):
 *********************************************************************************************
 COPYDOWN SECTION
 ---------------------------------------------------------------------------------------------
-------- ROM-ADDRESS: 0xC3A6 ---- SIZE       4 ---
+------- ROM-ADDRESS: 0xC3D7 ---- SIZE       4 ---
 Filling bytes inserted
- 00050901
-------- ROM-ADDRESS: 0xC3AA ---- RAM-ADDRESS: 0x901 ---- SIZE       1 ---
+ 00070901
+------- ROM-ADDRESS: 0xC3DB ---- RAM-ADDRESS: 0x901 ---- SIZE       1 ---
+Name of initialized Object : boardsAreSame:1
+ 01
+------- ROM-ADDRESS: 0xC3DC ---- SIZE       1 ---
+Filling bytes inserted
+ 00
+------- ROM-ADDRESS: 0xC3DD ---- RAM-ADDRESS: 0x903 ---- SIZE       1 ---
 Name of initialized Object : TICKS_BETWEEN_EVOLUTIONS:1
  64
-------- ROM-ADDRESS: 0xC3AB ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC3DE ---- SIZE       1 ---
 Filling bytes inserted
  00
-------- ROM-ADDRESS: 0xC3AC ---- RAM-ADDRESS: 0x903 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC3DF ---- RAM-ADDRESS: 0x905 ---- SIZE       1 ---
 Name of initialized Object : h:1
  1B
-------- ROM-ADDRESS: 0xC3AD ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC3E0 ---- SIZE       1 ---
 Filling bytes inserted
  00
-------- ROM-ADDRESS: 0xC3AE ---- RAM-ADDRESS: 0x905 ---- SIZE       1 ---
+------- ROM-ADDRESS: 0xC3E1 ---- RAM-ADDRESS: 0x907 ---- SIZE       1 ---
 Name of initialized Object : w:1
  15
-------- ROM-ADDRESS: 0xC3AF ---- SIZE       2 ---
+------- ROM-ADDRESS: 0xC3E2 ---- SIZE       2 ---
 Filling bytes inserted
  0000
 
@@ -1341,9 +1348,9 @@ _Startup                  USES __SEG_END_SSTACK Init main
 initializations           USES _CLKSEL _PLLCTL _SYNR _REFDV _CRGFLG _COPCTL 
                                 _TSCR1 _TSCR2 _TIOS _TIE _TC7 _SCIBD _SCICR1 _SCICR2 
                                 _SPICR1 _SPICR2 _SPIBR _DDRT _DDRAD _ATDDIEN _RTICTL 
-                                _CRGINT 
-evolve                    USES evolve h w board tempBoard 
-resetGame                 USES board h w 
+                                _CRGINT _ATDCTL23 _ATDCTL45 
+evolve                    USES evolve h w board tempBoard boardsAreSame 
+resetGame                 USES _ATDCTL45 _ATDSTAT0 _ATDDR0 randy board h w 
 displayBoard              USES displayColumn w 
 displayColumn             USES setSPIDataOnes shiftOutX yRegIndex board 
                                 setSPIDataBit h shiftOutY 
@@ -1351,12 +1358,10 @@ setSPIDataBit             USES _BSHL SPIData
 shiftOut                  USES SPIData _SPIDR _SPISR 
 shiftOutX                 USES _PTT delay shiftOut 
 shiftOutY                 USES _PTT delay shiftOut 
-setSPIDataZero            USES setSPIDataBit 
 setSPIDataOnes            USES setSPIDataBit 
-main                      USES initializations setSPIDataZero board 
-                                displayBoard interuptFlag tickCounter 
-                                ticksSinceLastEvolution TICKS_BETWEEN_EVOLUTIONS evolveFlag evolve 
-                                rghtpb resetGame 
+main                      USES initializations resetGame _TC7 displayBoard 
+                                interuptFlag tickCounter ticksSinceLastEvolution 
+                                TICKS_BETWEEN_EVOLUTIONS evolveFlag evolve boardsAreSame rghtpb 
 RTI_ISR                   USES _CRGFLG previousLeftButton _PORTAD0 leftpb 
                                 previousRightButton rghtpb 
 TIM_ISR                   USES _TFLG1 interuptFlag 
@@ -1372,20 +1377,18 @@ DEPENDENCY TREE
  |  | 
  |  +- initializations     
  |  |    
- |  +- setSPIDataZero      
- |  |  | 
- |  |  +- setSPIDataBit       
- |  |     | 
- |  |     +- _BSHL               
- |  |          
+ |  +- resetGame           
+ |  |    
  |  +- displayBoard        
  |  |  | 
  |  |  +- displayColumn       
  |  |     | 
  |  |     +- setSPIDataOnes      
  |  |     |  | 
- |  |     |  +- setSPIDataBit        (see above)
- |  |     |     
+ |  |     |  +- setSPIDataBit       
+ |  |     |     | 
+ |  |     |     +- _BSHL               
+ |  |     |          
  |  |     +- shiftOutX           
  |  |     |  | 
  |  |     |  +- delay               
@@ -1401,8 +1404,6 @@ DEPENDENCY TREE
  |  |        +- shiftOut             (see above)
  |  |           
  |  +- evolve              
- |  |    
- |  +- resetGame           
  |       
  +- _Startup            
     | 
@@ -1424,6 +1425,6 @@ STATISTIC SECTION
 
 ExeFile:
 --------
-Number of blocks to be downloaded: 7
-Total size of all blocks to be downloaded: 951
+Number of blocks to be downloaded: 6
+Total size of all blocks to be downloaded: 1002
 

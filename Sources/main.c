@@ -31,6 +31,8 @@ int gameStarted = 0;            // toggle for starting the game                 
 int rticnt = 0;                 // RTICNT (variable)
 int prevpb = 0;                 // previous state of pushbuttons (variable)
 int evolveFlag = 0;             
+int boardsAreSame = 1;          // assume the board is stuck
+int randy;
 int displayBoardFlag = 0;
 int interuptFlag = 0;
 int TICKS_BETWEEN_EVOLUTIONS = 100;
@@ -66,7 +68,7 @@ void  initializations(void) {
 
   TIOS = 0x80;            //set TIM TC7 for Output Compare
   TIE = 0x80;             //enable TIM TC7 interrupt
-  TC7 = 15000;            //set up TIM TC7 to generate 0.1 ms interrupt rate
+  TC7 = 1;                //set up TIM TC7 to generate {batshit insane} interrupt rate
   
   // Initialize asynchronous serial port (SCI) for 9600 baud, no interrupts
   SCIBDH =  0x00;         //set baud rate to 9600
@@ -99,6 +101,13 @@ void  initializations(void) {
   // Initialize RTI for 2.048 ms interrupt rate  
   RTICTL = 0x1F;
   CRGINT = 0x80;
+  
+  // Set up ATD to read floating
+  //Initialize ATD
+  ATDCTL2 = 0x80;
+  ATDCTL3 = 0x10;
+  ATDCTL4 = 0x85;
+  
 }
 
 /* 
@@ -127,10 +136,15 @@ void evolve() {
       tempBoard[y][x] = (n == 3 || (n == 2 && board[y][x]));
     }
   }
-
+  
+  boardsAreSame = 1; // assume evolved board is same as previous board
   for (y = 0; y < h; y++) {
     int x;
     for (x = 0; x < w; x++) {
+      // check if there
+      if (board[y][x] != tempBoard[y][x]) {
+        boardsAreSame = 0;
+      }
       board[y][x] = tempBoard[y][x];
     }
   }
@@ -141,7 +155,12 @@ void resetGame() {
   for (x = 0; x < w; x++) {
     int y;
     for (y = 0; y < h; y++) {
-      board[y][x] = y % 2;
+      // Read the ATD to get a random value
+      ATDCTL5 = 0x10;   
+      while (ATDSTAT0_SCF == 0);
+      randy = ATDDR0H;
+      board[y][x] = randy % 2;
+      //board[y][x] = (x*y*y/x) % 2;
     }
   }
 }
@@ -260,11 +279,9 @@ void main(void) {
 	EnableInterrupts;
   
   // reset game on startup
-  //resetGame();
-  setSPIDataZero();  board[5][10] = 1;
-  board[5][9] = 1;
-  board[5][8] = 1;
+  resetGame();
   
+  TC7 = 15000;            //set up TIM TC7 to generate 0.1 ms interrupt rate
   for(;;) {
     displayBoard();
     
@@ -275,13 +292,17 @@ void main(void) {
   
        if (ticksSinceLastEvolution >= TICKS_BETWEEN_EVOLUTIONS) {
          ticksSinceLastEvolution = 0;
-         evolveFlag = 1;  
+         evolveFlag = 1;
        }  
     }
     
     if (evolveFlag) {
       evolveFlag = 0;
       evolve();
+    }
+    
+    if (boardsAreSame == 1) {
+      resetGame();
     }
   
     // check to see if the user would like to reset the game (presses right push button)
